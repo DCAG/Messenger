@@ -1,0 +1,21 @@
+id|username|password|password_hash|createdDate|first_name|last_name|nickname|status|bio
+1|alice|p@ssw0rd|hash1|2024-05-16|Alice|Smith|Ali|active|Software engineer with a passion for coding.
+2|bob|secret123|hash2|2024-05-16|Bob|Johnson|Bobby|inactive|Designer and coffee enthusiast.
+3|charlie|qwerty|hash3|2024-05-16|Charlie|Brown|Chuck|active|Musician and nature lover.
+4|david|letmein|hash4|2024-05-16|David|Lee|Dave|active|Photographer exploring the world.
+5|emily|123456|hash5|2024-05-16|Emily|Garcia|Em|inactive|Bookworm and aspiring writer.
+6|frank|password|hash6|2024-05-16|Frank|Miller|Frankie|active|Fitness trainer and health advocate.
+7|grace|sunshine|hash7|2024-05-16|Grace|Wang|Gracie|active|Yoga instructor and meditation guide.
+8|harry|football|hash8|2024-05-16|Harry|Davis|Hank|inactive|Sports enthusiast and team player.
+9|isabella|iloveyou|hash9|2024-05-16|Isabella|Martinez|Izzy|active|Artist with a flair for colors.
+10|jack|baseball|hash10|2024-05-16|Jack|Robinson|Jax|inactive|Adventurer seeking new experiences.
+11|kate|welcome|hash11|2024-05-16|Kate|White|Katie|active|Foodie and amateur chef.
+12|liam|dragon|hash12|2024-05-16|Liam|Nguyen|Leo|inactive|Gamer and code debugger.
+13|mia|flower|hash13|2024-05-16|Mia|Kim|Mimi|active|Fashionista and trendsetter.
+14|noah|12345678|hash14|2024-05-16|Noah|Chen|Nate|inactive|Traveler documenting adventures.
+15|olivia|abcdef|hash15|2024-05-16|Olivia|Liu|Liv|active|Animal lover and rescue volunteer.
+16|peter|superman|hash16|2024-05-16|Peter|Gonzalez|Pete|inactive|Comic book collector and trivia master.
+17|quinn|chocolate|hash17|2024-05-16|Quinn|Smith|Q|active|Film buff and popcorn enthusiast.
+18|ryan|baseball1|hash18|2024-05-16|Ryan|Johnson|Ry|inactive|Music producer and beatmaker.
+19|sophia|sunflower|hash19|2024-05-16|Sophia|Brown|Sophie|active|Environmental advocate and tree hugger.
+20|thomas|qwerty123|hash20|2024-05-16|Thomas|Lee|Tom|inactive|History buff and trivia night champion.
