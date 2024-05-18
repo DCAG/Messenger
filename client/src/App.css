@@ -120,14 +120,26 @@ body {
   width: calc(100% - 15px); /* minus the page grid gap*/
 }
 
-.profile-dropdown-content a {
+.profile-dropdown-content a,
+.profile-dropdown-content button {
   color: black;
   /* padding: 12px 16px; */
   text-decoration: none;
-  display: block;
+  display: inline-block; /* inherit wouldn't affect the buttons */
+  /* ~button handling~ */
+  font-family: inherit;
+  font-size: inherit;
+  text-align: center;
+  background-color: inherit;
+  border: inherit;
+  cursor: default;
+  box-sizing: inherit;
+  width: calc(100% - 15px);
+
 }
 
-.profile-dropdown-content a:hover {background-color: #f1f1f1}
+.profile-dropdown-content a:hover,
+.profile-dropdown-content button:hover {background-color: #f1f1f1}
 
 .profile-dropdown:hover .profile-dropdown-content {
   display: block;

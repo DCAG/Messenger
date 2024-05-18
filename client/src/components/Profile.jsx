@@ -1,8 +1,17 @@
 import React from 'react'
 import contactLogo from '../assets/contact-small.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import useAuth from '../utils/useAuth'
 
 function Profile() {
+  const { logoutUser } = useAuth()
+  const navigate = useNavigate()
+
+  const logout = () => {
+    logoutUser();
+    navigate('/login')
+  }
+
   return (
     <div className='chat-list--profile profile-dropdown'>
       <div className='profile-dropbtn'>
@@ -11,9 +20,9 @@ function Profile() {
           {sessionStorage['username']}
         </span>
       </div>
-      <div class="profile-dropdown-content">
+      <div className="profile-dropdown-content">
         <Link to="/blockedContacts">Blocked Contacts</Link>
-        <Link to="/Logout">Logout</Link>
+        <button onClick={logout}>Logout</button>
       </div>
     </div>
   )

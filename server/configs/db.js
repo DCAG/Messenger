@@ -8,20 +8,28 @@ const init = async () => {
   });
 
   await db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
+  CREATE TABLE IF NOT EXISTS credentials (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
     password TEXT,
-    password_hash TEXT,
+    password_hash TEXT
+  );
+`);
+
+  await db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    username TEXT UNIQUE,
     createdDate DATE,
     first_name TEXT,
     last_name TEXT,
     nickname TEXT,
     status TEXT,
-    bio TEXT
+    bio TEXT,
+    FOREIGN KEY (id) REFERENCES credentials(id)
   );
 `);
-
+console.log('success -4')
   /**
    * direct chat is also a group - where 2 people are talking and they cannot set the name of the group ()
    */
@@ -33,26 +41,33 @@ const init = async () => {
     createdDate DATE
   );
 `);
-
+console.log('success -3')
   /**
    * direct chat is also a group - where 2 people are talking and they cannot set the name of the group
    */
   await db.exec(`
   CREATE TABLE IF NOT EXISTS group_members (
     group_id INTEGER,
-    user_id INTEGER
+    user_id INTEGER,
+    PRIMARY KEY (group_id, user_id),
+    FOREIGN KEY (group_id) REFERENCES groups(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
   );
 `);
 
+console.log('success -2') 
   await db.exec(`
   CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     group_id INTEGER,
     sender_user_id INTEGER,
-    content TEXT
+    content TEXT,
+    FOREIGN KEY (sender_user_id) REFERENCES users(id),
+    FOREIGN KEY (group_id) REFERENCES groups(id)
   );
 `);
 
+  console.log('success -1')
   return db;
 }
 

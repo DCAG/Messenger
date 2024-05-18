@@ -14,9 +14,12 @@ const AuthProvider = ({ children }) => {
     }
   }, [])
 
-  const loginUser = (accessToken, username) => {
+  const loginUser = (accessToken, userData) => {
     sessionStorage['accessToken'] = accessToken
-    sessionStorage['username'] = username
+    // splat userData into sessionStorage
+    Object.keys(userData).forEach(key => {
+      sessionStorage[key] = userData[key]
+    })
     setIsAuthenticated(true)
   }
 

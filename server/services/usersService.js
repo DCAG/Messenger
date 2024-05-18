@@ -1,23 +1,17 @@
 const bcrypt = require('bcrypt')
+const usersRepo = require('../repositories/usersRepo')
 
-const verifyCredentials = (username, password) => {
-
-}
-
-const create = async () => {
-  {
-    username
-    password
-    createdDate
+const verifyCredentials = async (username, password) => {
+  const creds = await usersRepo.getCredentials(username)
+  if(creds){
+    return await bcrypt.compare(password, creds.password_hash) 
   }
-
-  const saltRounds = process.env.SALT_ROUNDS || 10
-
-  await bcrypt.hash(password, saltRounds)
-  .then(hash => {
-    console.log('Hash ', hash)
-  })
-  .catch(err => console.error(err.message))
+  return false
 }
 
-module.exports = {}
+const getByUsername = (username) => {
+  username.trim()
+  return usersRepo.getByUsername(username)
+}
+
+module.exports = {verifyCredentials, getByUsername}

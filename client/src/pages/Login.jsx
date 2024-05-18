@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../utils/useAuth'
+import axios from 'axios'
 
-const LOGIN_URL = 'http://localhost:3001/auth/login'
+const LOGIN_URL = 'http://localhost:3000/auth/login'
 
 function Login() {
   const navigate = useNavigate()
@@ -20,7 +21,7 @@ function Login() {
 
     try {
       const { data } = await axios.post(LOGIN_URL, loginData)
-      loginUser(data.accessToken, data.user.username)
+      loginUser(data.accessToken, data.user)
       navigate('/')
     } catch (error) {
       console.error(error)
