@@ -30,11 +30,19 @@ function Login() {
   }
 
   return (
-    <div>
+    <div className='login-page'>
+      <h1>Login</h1>
       <form onSubmit={handleLogin} className='login-form'>
-        <input type="text" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder='Username:' required /> <br />
-        <input type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Password:' required /> <br />
-        <input type='submit' value="Login" /> <br />
+        <div className='login-form--fields'>
+          <label htmlFor="username">Username: </label>
+          <input type="text" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder='Username:' required />
+          <label htmlFor="password">Password: </label>
+          <input type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Password:' required />
+        </div>
+        <div className='login-form--actions'>
+          <button type='submit'>Login</button>
+          <span></span>
+        </div>
       </form>
     </div>
   )

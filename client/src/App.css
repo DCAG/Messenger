@@ -413,3 +413,47 @@ body {
   color: #FFFFFF;
   transform: translate(-100%, -1px) scaleY(75%);
 }
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+.login-page h1 {
+  align-self: center;
+}
+
+.login-form {
+  align-self: center;
+  height: 100vh;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.login-form--fields {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 0.25rem;
+}
+
+.login-form--fields label {
+  text-align: right;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  font-size: large;
+  padding: 0.25rem;
+}
+
+.login-form--actions {
+  text-align: center;
+}
+
+.login-form button[type="submit"] {
+  padding: 0.5rem;
+  margin: 0.5rem;
+  font-family: inherit;
+}
