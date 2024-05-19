@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import GroupMembersInput from '../components/GroupMembersInput'
+import useSocket from '../utils/useSocket'
 
 function NewEditGroup() {
   const {id} = useParams()
   const emptyGroup = {name:'',members:[]}
   const [group, setGroup] = useState(emptyGroup)
+  const {socket} = useSocket()
   // NOTE: in case moving from edit group to a new group - since this is the same component - the state must change to an empty object
   useEffect(() => {
     console.log("useEffect - id",id)
@@ -26,7 +28,10 @@ function NewEditGroup() {
   const handleSubmit = (e) => {
     e.preventDefault()
     // navigate('/')
-    console.log('saved group changes: ',group)
+    if(e.nativeEvent.submitter.id == "submitNewGroupForm"){
+      console.log('saved group changes: ',group)
+      socket.emit("group:create", {...group, description: group.name, members: group.members.map(i=>i.id)})
+    }
   }
   console.log(id)
   return (
@@ -39,7 +44,7 @@ function NewEditGroup() {
           <GroupMembersInput className="new-editgroup-form--members" allKV={contacts} selectedKV={group.members} onChange={e=>setGroup(prev => {return {...prev, members: e}})} />
         </div>
         <div>
-          <button type="submit">{id?"Save":"Create Group"}</button>
+          <button id='submitNewGroupForm' type="submit">{id?"Save":"Create Group"}</button>
         </div>
       </form>
     </div>

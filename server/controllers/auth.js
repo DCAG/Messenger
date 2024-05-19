@@ -1,6 +1,7 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const usersService = require('../services/usersService')
+const errorMessages = require('../utils/errorMessages')
 
 const router = express.Router()
 

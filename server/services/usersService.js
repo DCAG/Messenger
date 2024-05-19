@@ -14,4 +14,8 @@ const getByUsername = (username) => {
   return usersRepo.getByUsername(username)
 }
 
-module.exports = {verifyCredentials, getByUsername}
+const getAll = () => {
+  return usersRepo.getAll()
+}
+
+module.exports = {verifyCredentials, getByUsername, getAll}
