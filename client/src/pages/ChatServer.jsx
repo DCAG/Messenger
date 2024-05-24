@@ -36,6 +36,7 @@ function ChatServer() {
     return () => {
       // before the component is destroyed
       // unbind all event handlers used in this component
+      socket.off("userId", handleIncomingMessage);
       socket.off("MESSAGE_RECEIVED", handleIncomingMessage);
     };
   }, [socket]);

@@ -4,8 +4,8 @@ const groupSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ['direct', 'group'],
-      default: 'direct',
+      enum: ['contact', 'group'],
+      default: 'contact',
     },
     name: { type: String },
     description: { type: String },

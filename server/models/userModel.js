@@ -14,7 +14,9 @@ const userSchema = new mongoose.Schema(
     },
     {
         versionKey: false,
-        timestamps: true // This adds `createdAt` and `updatedAt` fields
+        timestamps: true, // This adds `createdAt` and `updatedAt` fields
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 )
 

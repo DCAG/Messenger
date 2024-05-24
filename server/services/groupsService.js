@@ -1,16 +1,21 @@
 const groupsRepo = require('../repositories/groupsRepo')
+const chatRepo = require('../repositories/chatRepo')
 
-const create = async (name, description, members) => {
-  const result = await groupsRepo.create(name, description, new Date(), members)
-  return result;
+const create = async (object) => {
+  const group = await groupsRepo.create(object)
+  await chatRepo.createMessagesTable(group._id)
+  return group
 }
 
-const getMembersById = (groupId) => {
-  return groupsRepo.getMembersById(groupId)
+const update = async (id, object) => {
+  const group = await groupsRepo.update(id, object)
+  return group
 }
 
 const joinMember = async (groupId, userId) => {
-  return groupsRepo.joinMember(groupId, userId)
+  const group = await groupsRepo.getById(groupId)
+  group.members.push(userId)
+  return await groupsRepo.update(groupId, group)
 }
 
 const getById = (id) => {
@@ -21,8 +26,4 @@ const getByUserId = (userId) => {
   return groupsRepo.getByUserId(userId)
 }
 
-const getAll = () => {
-  return groupsRepo.getAll()
-}
-
-module.exports = {getMembersById, create, getAll, getById, getByUserId, joinMember}
+module.exports = {getByUserId, create, update, getById, joinMember}

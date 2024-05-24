@@ -1,4 +1,3 @@
-const dbInstance = require('../configs/db')
 const fs = require('fs')
 const csvParse = require('csv-parse')
 const bcrypt = require('bcrypt')
@@ -6,8 +5,12 @@ const bcrypt = require('bcrypt')
 const USERS_DATA = "./init/usersData.csv"
 const SALT_ROUNDS = process.env.SALT_ROUNDS || 10
 
+const usersService = require('../services/usersService')
+const connectMongoDB = require('../configs/mongodb')
+
+connectMongoDB() // NOTE: will keep the process running!!!
+
 fs.readFile(USERS_DATA, 'utf-8', async function (err, fileData) {
-  const db = await dbInstance.init()
 
   console.log("reading", fileData)
   const parsedFile = csvParse.parse(fileData, { delimiter: '|', trim: true, columns: true })
@@ -15,34 +18,17 @@ fs.readFile(USERS_DATA, 'utf-8', async function (err, fileData) {
 
   usersObjects = parsedFile.map(async (record) => {
     delete record.id
-    delete record.password_hash
+    delete record.passwordHash
+    delete record.createdDate
     user = { ...record }
 
-    user.password_hash = await bcrypt.hash(user.password, SALT_ROUNDS)
+    user.passwordHash = await bcrypt.hash(user.password, SALT_ROUNDS)
     return user
   })
+
   console.log(usersObjects.length)
+   
   usersObjects.forEach(async (user) => {
-    const row = await db.run('INSERT INTO credentials (username, password, password_hash) VALUES (?, ?, ?)',
-      user.username,
-      user.password,
-      user.password_hash,
-    );
-    // console.log(row.lastID)
-    try {
-      await db.run('INSERT INTO users (id, username, createdDate, first_name, last_name, nickname, status, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        row.lastID,
-        user.username,
-        user.createdDate,
-        user.first_name,
-        user.last_name,
-        user.nickname,
-        user.status,
-        user.bio
-      );
-    }
-    catch (ex) {
-      console.error(ex)
-    }
+    usersService.create(user)
   })
 })

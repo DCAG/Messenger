@@ -7,14 +7,14 @@ import { AuthProvider } from './middleware/AuthContext.jsx'
 import { SocketProvider } from './middleware/SocketContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <SocketProvider>
+  // <React.StrictMode>
+  <BrowserRouter>
+    <AuthProvider>
+      <SocketProvider>
         <App />
-        </SocketProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+      </SocketProvider>
+    </AuthProvider>
+  </BrowserRouter>
+  // </React.StrictMode>
   ,
 )

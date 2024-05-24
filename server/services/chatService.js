@@ -1,21 +1,35 @@
 const chatRepo = require('../repositories/chatRepo')
 
-const create = async (groupId, senderUserId, content) => {
-  const result = await chatRepo.create(groupId, senderUserId, content)
-  return result;
+const writeMessage = (groupId, senderId, content) => {
+  return chatRepo.writeMessage(groupId, senderId, content)
 }
 
-const getById = (id) => {
-  return chatRepo.getById(id)
+const getAllMessages = async (groupId) => {
+  try {
+    return await chatRepo.getAllMessages(groupId)
+  }
+  catch (e) {
+    if (/no such table/.test(e.message)) {
+      return undefined
+    }
+    else {
+      throw e
+    }
+  }
 }
 
-const getByUsername = (username) => {
-  return chatRepo.getByUsername(username)
+const getAllRemainingMessages = (groupId, offset) => {
+  try {
+    return chatRepo.getAllRemainingMessages(groupId, offset)
+  }
+  catch (e) {
+    if (/no such table/.test(e.message)) {
+      return undefined
+    }
+    else {
+      throw e
+    }
+  }
 }
 
-const getAll = () => {
-  return chatRepo.getAll()
-}
-
-
-module.exports = {create, getById, getByUsername, getAll}
+module.exports = { getAllRemainingMessages, writeMessage, getAllMessages }

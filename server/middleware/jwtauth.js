@@ -47,7 +47,7 @@ const socketJWT = (socket, next) => {
         const err = new Error("not authorized")
         err.data = {
             content: errorMessages.
-            RESTRICTED_PAGE_ACCESS_MISSING_TOKEN(req.originalUrl)
+            RESTRICTED_PAGE_ACCESS_MISSING_TOKEN(socket.request.url)
         }
         next(err)
         return;

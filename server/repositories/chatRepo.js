@@ -3,14 +3,16 @@
 const {getByQuery, runQuery, execQuery} = require('../configs/sqldb')
 // const fs = require('node:fs');
  
-const constCreateMessagesTable = (tableName) => {
+const createMessagesTable = (tableName) => {
+  // table names cannot be accepted as arguments
+  // NOTE: make sure the group name is coming from previous mongodb query result
   return execQuery(`
-  CREATE TABLE IF NOT EXISTS ? (
+  CREATE TABLE IF NOT EXISTS c${tableName} (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    senderId INTEGER NOT NULL, -- user._id
+    senderId INTEGER NOT NULL,
     content TEXT NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-  );`, tableName)
+  );`)
   /*
   FOREIGN KEY (sender_user_id) REFERENCES users(id),
   FOREIGN KEY (group_id) REFERENCES groups(id)
@@ -25,11 +27,15 @@ const constCreateMessagesTable = (tableName) => {
  * @returns 
  */
 const writeMessage = (groupId, senderId, content) => {
-  return runQuery('INSERT INTO ? (senderId, content) VALUES (?, ?)',groupId, senderId, content)
+  return runQuery(`INSERT INTO ${'c'+groupId} (senderId, content) VALUES (?, ?)`, senderId, content)
 }
 
 const getAllMessages = (groupId) => {
-  return getByQuery(`SELECT * FROM ?`, groupId)
+  return getByQuery(`SELECT * FROM ${'c'+groupId}`)
+}
+
+const getAllRemainingMessages = (groupId, offset) => {
+  return getByQuery(`SELECT * FROM ${'c'+groupId} WHERE id > ?`,{}, offset)
 }
 
 // const getSingleMessageById = (groupId, id) => {
@@ -40,4 +46,4 @@ const getAllMessages = (groupId) => {
 //   return getByQuery(`SELECT * FROM ? WHERE username == ?`, {single: true}, groupId, username)
 // }
 
-module.exports = {constCreateMessagesTable, getAllMessages, writeMessage} //, create, update, remove}
+module.exports = {getAllRemainingMessages, createMessagesTable, getAllMessages, writeMessage} //, create, update, remove}

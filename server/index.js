@@ -5,7 +5,10 @@ const authController = require('./controllers/auth')
 const selfController = require('./controllers/self')
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
+const connectMongoDB = require('./configs/mongodb')
+const groupsService = require('./services/groupsService')
 
+connectMongoDB()
 const app = express();
 const httpServer = createServer(app);
 
@@ -29,9 +32,13 @@ httpServer.listen(port, () => {
 io.use(socketJWT);
 
 const {
+  getAllUserGroups,
   createGroup,
+  editGroup,
   joinUserToGroup,
+  removeUserFromGroup,
   messageChat,
+  messageNewChat,
   fetchChatHistory,
   blockUser,
   getAllContacts
@@ -39,24 +46,33 @@ const {
 
 const onConnection = (socket) => {
   socket.on("group:create", createGroup);
+  socket.on("group:edit", editGroup);
   socket.on("group:user-join", joinUserToGroup);
+  socket.on("group:user-leave", removeUserFromGroup);
   socket.on("chat:message", messageChat);
+  socket.on("chat:new:message", messageNewChat);
   socket.on("chat:fetch", fetchChatHistory);
   socket.on("user:blockUser", blockUser);
   socket.on("contacts:getAll", getAllContacts);
-
-
-  const user = socket.request.user;
+  socket.on("groups:getAllUser", getAllUserGroups);
+  
+  const user = socket.request.user; 
+  // const username = user.user.username
   const userId = user?.user?.id
-  // console.log("connected via socket.io!")
-  // console.log(user)
+  // // console.log("connected via socket.io!")
+  // // console.log(user)
   socket.join(`user:${userId}`);
-  io.to(`user:${userId}`).emit("foo", "bar");
-  io.to(`user:${userId}`).emit("MESSAGE_RECEIVED", { id: '1', sender: 'Amir', message: user?.user?.username });  
-  io.to(`user:${userId}`).emit("MESSAGE_RECEIVED", { id: '2', sender: 'Amir', message: 'First!1' });  
-  io.to(`user:${userId}`).emit("MESSAGE_RECEIVED", { id: '3', sender: 'Amir', message: 'First!2' });  
-  io.to(`user:${userId}`).emit("MESSAGE_RECEIVED", { id: '4', sender: 'Amir', message: 'First!3' });  
-  io.to(`user:${userId}`).emit("MESSAGE_RECEIVED", { id: '5', sender: 'Amir', message: 'First!4' });  
+  // const groups = groupsService.getByUserId(userId)
+  // user?.user?.groups?.forEach(async group => {
+  //   // const fullGroup = groups.find(g=>g._id==group._id)
+  //   const fullGroup = await groupsService.getById(group._id)
+  //   socket.join(`group:${group._id}`)
+  //   let chatDisplayName = group.name
+  //   if(group.type == "contact"){
+  //     chatDisplayName = fullGroup?.members?.find(m=>m._id!=userId)?.username??":unknown:" 
+  //   }
+  //   console.log(`${user.user.username} joined '${chatDisplayName}' [${group._id}]`)
+  // })
 }
 
 io.on("connection", onConnection);
