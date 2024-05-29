@@ -21,4 +21,8 @@ const create = (object) => {
   return usersRepo.create(object)
 }
 
-module.exports = {verifyCredentials, create, getByUsername, getAll}
+const update = (id,object) => {
+  return usersRepo.update(id,object)
+}
+
+module.exports = {update, verifyCredentials, create, getByUsername, getAll}

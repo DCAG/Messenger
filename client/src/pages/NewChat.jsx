@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import useSocket from '../utils/useSocket'
 
 function NewChat() {
-  const {contacts:socketContacts, groups, socket} = useSocket() // [{id,username},...]
+  const {contacts:socketContacts, groups} = useSocket() // [{id,username},...]
   const [contacts,setContacts] = useState([]) // ['a':[{id,username},...],...]
   const navigate = useNavigate()
 
@@ -15,7 +15,8 @@ function NewChat() {
   }
 
   useEffect(()=>{ 
-    const sortedContacts = groupContactsByFirstLetter(socketContacts)
+    const otherContacts = socketContacts.filter(contact=>contact._id != sessionStorage['_id'])
+    const sortedContacts = groupContactsByFirstLetter(otherContacts)
     setContacts(prev => sortedContacts??prev)
   },[socketContacts])
 

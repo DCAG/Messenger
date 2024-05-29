@@ -65,6 +65,7 @@ module.exports = (io) => {
   const removeUserFromGroup = async function (groupId) {
     const socket = this;
     socket.leave(`group:${groupId}`)
+    console.debug(`user ${socket.request.user.user.username} left ${groupId}`)
   };
   const messageChat = async function (msgObject) {
     const socket = this;
@@ -130,9 +131,25 @@ module.exports = (io) => {
       }
     })
   };
-  const blockUser = function () {
+
+  /**
+   * 
+   * @param {Array<String>} blockedContacts 
+   */
+  const blockContact = async function (blockedContacts) {
     const socket = this;
+    const socketUser = socket?.request?.user;
+    const user = await usersService.getByUsername(socketUser.user.username)
+    user._doc.blockedList = blockedContacts 
+    const updatedUser = await usersService.update(user._id, user)
+    socket.emit('contact:blocked', updatedUser._doc.blockedList) // TODO: if I want to return the new object need to change in the model.
+    const thisUserGroups = await groupsService.getByUserId(socketUser.user._id)
+    const directChatsToLeave = thisUserGroups.filter(g=>g.type == 'contact' && g.members.some(m=>blockedContacts.includes(m._id.toString()))).map(g=>g._id)
+    directChatsToLeave.forEach(chat => socket.leave(`group:${chat}`))
+    //TODO: test and implement on client side
+    socket.emit('chats:left',[].concat(directChatsToLeave))
   };
+
   const getAllContacts = async function () {
     const socket = this;
     const contacts = await usersService.getAll();
@@ -157,7 +174,7 @@ module.exports = (io) => {
     messageChat,
     messageNewChat,
     fetchChatHistory,
-    blockUser,
+    blockContact,
     getAllContacts
   }
 }

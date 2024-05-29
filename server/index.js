@@ -40,7 +40,7 @@ const {
   messageChat,
   messageNewChat,
   fetchChatHistory,
-  blockUser,
+  blockContact,
   getAllContacts
 } = require("./handlers/handlers")(io);
 
@@ -52,9 +52,9 @@ const onConnection = (socket) => {
   socket.on("chat:message", messageChat);
   socket.on("chat:new:message", messageNewChat);
   socket.on("chat:fetch", fetchChatHistory);
-  socket.on("user:blockUser", blockUser);
   socket.on("contacts:getAll", getAllContacts);
   socket.on("groups:getAllUser", getAllUserGroups);
+  socket.on("contact:block", blockContact);
   
   const user = socket.request.user; 
   // const username = user.user.username

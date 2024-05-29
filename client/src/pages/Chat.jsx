@@ -27,11 +27,15 @@ function Chat() {
   }
 
   const leaveGroup = () => {
-
+    socket.emit("group:user-leave")
   }
 
   const blockContact = () => {
-
+    if(chatItem.type=='contact'){
+      const otherMember = chatItem.members.find(member => member._id != sessionStorage['id'])
+      socket.emit('contact:block',[].concat(otherMember._id))
+      //TODO: on the server side: leaving this chat
+    }
   }
 
 
@@ -112,7 +116,7 @@ function Chat() {
 
   useEffect(() => {
     setChatName(getChatName(chatItem))
-    setIsGroupChat(prev => chatItem?.type == "group" ?? prev)
+    setIsGroupChat(prev => (chatItem?.type == "group") ?? prev)
     setStatusText(getStatusText(chatItem))
   }, [chatItem, newChatName])
 

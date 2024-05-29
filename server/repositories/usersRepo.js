@@ -36,4 +36,8 @@ const create = async (object) => {
   return await user.create(userObject)
 }
 
-module.exports = {create, getAll, getCredentials, getById, getByUsername} //, create, update, remove}
+const update = (id, object) => {
+  return user.findByIdAndUpdate(id, object, {returnDocument: 'after'})
+}
+
+module.exports = {update, create, getAll, getCredentials, getById, getByUsername} //, create, update, remove}

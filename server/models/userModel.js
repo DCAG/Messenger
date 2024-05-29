@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
         lastName: {type:String},
         bio: {type:String},
         status: {type:String},
-        createdDate: {type:String},
+        blockedList: [{type: mongoose.Schema.Types.ObjectId, ref: 'user'}],
     },
     {
         versionKey: false,

@@ -12,6 +12,7 @@ const SocketProvider = ({ children }) => {
   const [contacts, setContacts] = useState([])
   const [groups, setGroups] = useState([])
   const [groupMessages, setGroupMessages] = useState({})
+  const [blockedList, setBlockedList] = useState({})
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -72,8 +73,8 @@ const SocketProvider = ({ children }) => {
 
     function onGroupLeave(groupId) {
       console.log("removed from group:", groupId)
-      let a = groups.filter(g=>g._id==groupId)
-      setGroups(a)
+      let remainingGroups = groups.filter(g=>g._id==groupId)
+      setGroups(remainingGroups)
       socket.emit('group:user-leave', groupId)
       console.log("sent request to leave group:", groupId)
       if(location.pathname.endsWith(groupId)){
@@ -81,10 +82,31 @@ const SocketProvider = ({ children }) => {
       }
     }
 
+    function onGroupsLeave(groupIds){
+      console.log("removed from groups:", groupIds)
+      let remainingGroups = groups.filter(g=>!groupIds.includes(g._id))
+      //FIXME: groups is empty - why???
+      //TODO: make sure on refresh the groups will not reconnect - will stay blocked!
+      setGroups(remainingGroups)
+      for(const groupId of groupIds){
+        if(location.pathname.endsWith(groupId)){
+          navigate('/')
+          return
+        }
+      }
+    }
+
     function onChatMessage(payload) {
       // console.log("accepted message:", payload)
       setGroupMessages(prev => {
         //console.log("GroupMessages:",prev)
+
+        //prevent duplicates - when debugging the server
+        let msgExist = prev[payload.groupId].find(msg=>msg.id==payload.id)
+        if(msgExist){
+          return prev
+        }
+
         return {
           ...prev,
           [payload.groupId]: [
@@ -104,31 +126,21 @@ const SocketProvider = ({ children }) => {
       navigate('/contact/' + groupId)
     }
 
-    // socket.io.on("reconnect_attempt", () => {
-    //   console.log('reconnect_attempt')
-    //   if(isAuthenticated && sessionStorage['accessToken']){
-    //     socket.io.opts.query.token = sessionStorage['accessToken'];
-    //     socket.auth = {token: sessionStorage['accessToken']}
-    //   }
-    // });
-
-    // socket.on("connect_error", (err) => {
-    //   console.log('connect_error')
-    //   if (err.message === "invalid credentials" && isAuthenticated) {
-    //     socket.auth = {token: sessionStorage["accessToken"]}
-    //     socket.connect();
-    //   }
-    // });
+    function onContactBlocked(blockedContacts){
+      setBlockedList(blockedContacts)
+    }
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('contacts:received', onContactsReceived);
     socket.on('group:invite', onGroupJoin);
     socket.on('group:leave', onGroupLeave);
+    socket.on('chats:left', onGroupsLeave);
     socket.on('chat:message', onChatMessage);
     socket.on('message:received', onChatMessage);
     socket.on('groups:received', onGroupsReceived);
     socket.on('chat:redirect', onChatRedirection);
+    socket.on('contact:blocked', onContactBlocked);
     
     return () => {
       socket.off('connect', onConnect);
@@ -136,10 +148,12 @@ const SocketProvider = ({ children }) => {
       socket.off('contacts:received', onContactsReceived);
       socket.off('group:invite', onGroupJoin);
       socket.off('group:leave', onGroupLeave);
+      socket.off('chats:left', onGroupsLeave);
       socket.off('chat:message', onChatMessage);
       socket.off('message:received', onChatMessage);
       socket.off('groups:received', onGroupsReceived);
       socket.off('chat:redirect', onChatRedirection);
+      socket.off('contact:blocked', onContactBlocked);
       socket.disconnect()
     };
   }, [isAuthenticated]);
