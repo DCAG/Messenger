@@ -3,6 +3,48 @@ const groupsService = require('../services/groupsService')
 const usersService = require('../services/usersService')
 
 module.exports = (io) => {
+  const getAllContacts = async function () {
+    const socket = this;
+    const contacts = await usersService.getAll();
+    socket.emit('contacts:received', contacts)
+  }
+
+  const getAllUserGroups = async function () {
+    const socket = this;
+    const socketUser = socket?.request?.user;
+    const socketUserId = socketUser?.user?._id
+    // get all chats
+    const groups = await groupsService.getByUserId(socketUserId) ?? []
+    socket.emit('chats:received', groups)
+
+    // join all groups chats and unblocked private chats
+    const user = await usersService.getByUsername(socketUser.user.username)
+    const blockedList = user.blockedList
+    groups
+      .filter(group => group.type !== 'private')
+      .forEach(group => {
+        socket.join(`chat:${group._id}`)
+        console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    })
+    groups
+      .filter(group => group.type === 'private' && 
+                      !group.members.some(member=>blockedList.includes(member._id)))
+      .forEach(group => {
+        socket.join(`chat:${group._id}`)
+        console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    })
+    // // shorter version (might be less readable)
+    // const unblockedGroups = groups.filter(group => {
+    //   // if on private chat the other member is not in blocked list then join to the chat
+    //   return group.type!=='private' ||
+    //     !group.members.some(member=>blockedList.includes(member._id))
+    // })
+    // for(group of unblockedGroups){
+    //   socket.join(`chat:${group._id}`)
+    //   console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    // }
+  }
+
   const createGroup = async function (payload) {
     const socket = this;
     const { name, description, members } = payload
@@ -12,7 +54,7 @@ module.exports = (io) => {
       const userId = user._id
       // if they are connected notify them about new group. then they will join
       // if they are NOT CONNECTED - they will get all the groups data when they are connected
-      io.to(`user:${userId}`).emit("group:invite", group) //group._id);
+      io.to(`user:${userId}`).emit("group:joined", group) //group._id);
     })
   };
   const editGroup = async function (payload) {
@@ -23,14 +65,14 @@ module.exports = (io) => {
     const membersRemoved = oldGroup.members.filter(m=>!members.includes(m._id.toString()))
     const group = await groupsService.update(_id, { type: 'group', name, description, members })
     // NOTE: instead maybe - send which members were removed so each will find himself and send a request to leave
-    // here is a start to this idea: io.to(`group:${group._id}`).emit("group:leave", {group._id, members: membersRemoved})
+    // here is a start to this idea: io.to(`group:${group._id}`).emit("group:removed", {group._id, members: membersRemoved})
     membersRemoved.forEach((userId) => {
-      io.to(`user:${userId}`).emit("group:leave", group._id);
+      io.to(`user:${userId}`).emit("group:removed", group._id);
     })
     membersAdded.forEach((userId) => {
       // if they are connected notify them about new group. then they will join
       // if they are NOT CONNECTED - they will get all the groups data when they are connected
-      io.to(`user:${userId}`).emit("group:invite", group._id);
+      io.to(`user:${userId}`).emit("group:joined", group._id);
     })
   };
 
@@ -58,7 +100,7 @@ module.exports = (io) => {
     const allMessages = await chatService.getAllRemainingMessages(groupId, messagesOffset)
     // TODO: test new chat here!!! 
     allMessages.forEach((message) => {
-      io.to(`user:${userId}`).emit("chat:message", { groupId: groupId, ...message })
+      io.to(`user:${userId}`).emit("message:received", { groupId: groupId, ...message })
     })
   };
 
@@ -113,7 +155,7 @@ module.exports = (io) => {
     
     group.members.forEach(async (member) => {
       // client will register group, request to join and fetch messages
-      io.to(`user:${member._id}`).emit("group:invite", group);
+      io.to(`user:${member._id}`).emit("group:joined", group);
     })
     
     // io.to(`group:${groupId}`).emit("message:received", { groupId, ...loggedMessage[0] })
@@ -124,13 +166,15 @@ module.exports = (io) => {
     const socket = this;
     groupsIds.forEach(async (gid) => {
       const messages = await chatService.getAllMessages(gid)
-      if (messages) {
-        messages.forEach(msg => {
-          socket.emit('chat:message', { ...msg, groupId: gid })
-        })
-      }
+      socket.emit('message:received', { chatId: gid, messages: messages, offset: 0 })
     })
   };
+
+  const getMessages = async function(chatId, clientOffset=0) {
+    const socket = this;
+    const messages = await chatService.getAllRemainingMessages(chatId,clientOffset)
+    socket.emit('message:received', { chatId, messages })
+  }
 
   /**
    * 
@@ -147,23 +191,9 @@ module.exports = (io) => {
     const directChatsToLeave = thisUserGroups.filter(g=>g.type == 'contact' && g.members.some(m=>blockedContacts.includes(m._id.toString()))).map(g=>g._id)
     directChatsToLeave.forEach(chat => socket.leave(`group:${chat}`))
     //TODO: test and implement on client side
-    socket.emit('chats:left',[].concat(directChatsToLeave))
+    socket.emit('group:removed',[].concat(directChatsToLeave))
   };
 
-  const getAllContacts = async function () {
-    const socket = this;
-    const contacts = await usersService.getAll();
-    socket.emit('contacts:received', contacts)
-  }
-
-  const getAllUserGroups = async function () {
-    const socket = this;
-    const socketUser = socket?.request?.user;
-    const socketUserId = socketUser?.user?._id
-    const groups = await groupsService.getByUserId(socketUserId) ?? []
-    socket.emit('groups:received', groups)
-    
-  }
 
   return {
     getAllUserGroups,
@@ -174,6 +204,7 @@ module.exports = (io) => {
     messageChat,
     messageNewChat,
     fetchChatHistory,
+    getMessages,
     blockContact,
     getAllContacts
   }
