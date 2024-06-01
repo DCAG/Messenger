@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react'
 
 /**
+ * @typedef MultiSelectKeyValuePair
+ * @property {string} id value that can be selected
+ * @property {string} name that will be displayed
  * 
- * @param {*} allKV array of objects {id,name}
- * @param {*} selectedKV array of objects {id,name}. selectedKV is a subset or allKV
+ */
+
+/**
+ * @param {MultiSelectKeyValuePair[]} allKV all key-value pairs available to select from 
+ * @param {MultiSelectKeyValuePair[]} selectedKV subset of allKV that were selected
+ * @param {function(MultiSelectKeyValuePair[]): void} onChange
+ * @param {String} className
  * @returns 
  */
 function GroupMembersInput({ allKV, selectedKV, onChange, className }) {
-  // const [all, setAll] = useState([])
   const [selected, setSelected] = useState([])
   const [excluded, setExcluded] = useState([])
-  // arrays of keys only
+  // 'toAdd' and 'toRemove' are arrays of keys only
   const [toAdd, setToAdd] = useState([])
   const [toRemove, setToRemove] = useState([])
 
   useEffect(() => {
-    // setAll(prev => allKV??prev)
     setSelected(prev => selectedKV ?? prev)
     setExcluded(prev => allKV.filter(item => !selectedKV?.some(s => s.id == item.id)) ?? prev)
-    // console.log('all',all)
-    // console.log('selected',selected)
-    // console.log('excluded',excluded)
   }, [allKV, selectedKV])
 
   const handleAdd = () => {
@@ -53,7 +56,6 @@ function GroupMembersInput({ allKV, selectedKV, onChange, className }) {
 
   const handleChange = (e) => {
     let value = Array.from(e.target.selectedOptions, option => option.value);
-    // DELETEME: console.log("change",value)
     if (e.target.name == 'excluded') {
       setToAdd(value)
     }
@@ -83,7 +85,6 @@ function GroupMembersInput({ allKV, selectedKV, onChange, className }) {
         <button onClick={handleRemove}>{"\u2B05"}</button>
       </div>
       <div>
-
         <select name="selected" id="" multiple value={[...toRemove]} onChange={handleChange}>
           <option value="0_SELECTED" disabled>selected</option>
           {

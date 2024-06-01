@@ -26,7 +26,7 @@ function Login() {
       loginUser(data.accessToken, data.user)
       socket.auth = {token: data.accessToken}
       socket.disconnect().connect();
-      navigate('/')
+      navigate('/chats')
     } catch (error) {
       console.error(error)
       // setFormError(error.response?.data?.message??error)

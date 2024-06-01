@@ -2,7 +2,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { socket } from '../utils/socket'
-import useAuth from "../utils/useAuth";
 import '../utils/types'
 
 const SocketContext = createContext();
@@ -10,13 +9,13 @@ const SocketContext = createContext();
 const SocketProvider = ({ children }) => {
   const navigate = useNavigate()
 
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isConnected, setIsConnected] = useState(socket.connected)
   const [contacts, setContacts] = useState({})
   const [chats, setChats] = useState({})
   const [privateChatsMap, setPrivateChatsMap] = useState({})
   const [messageGroups, setMessageGroups] = useState({})
-  const [blockedList, setBlockedList] = useState({})
-  const [me, setMe] = useState({})
+  const [profile, setProfile] = useState({})
+  const [blockedList, setBlockedList] = useState([])
 
   useEffect(() => {
     const token = sessionStorage['accessToken'];
@@ -29,6 +28,7 @@ const SocketProvider = ({ children }) => {
       setIsConnected(true);
       socket.emit('contacts:get') //TODO: replace getAll with get or create seperate call - to update specific user or this user.
       socket.emit('chats:getMy')
+      socket.emit('profile:getMy')
     }
 
     function onDisconnect() {
@@ -37,16 +37,19 @@ const SocketProvider = ({ children }) => {
 
     /**
      * 
+     * @param {Contact} myProfile 
+     */
+    function onProfileReceived(myProfile) {
+      setBlockedList(prev => myProfile.blockedList ?? prev)
+      setProfile(prev => myProfile ?? prev)
+    }
+
+    /**
+     * 
      * @param {Contact[]} users
      */
     function onContactsReceived(users) {
       console.log("users.length", users.length)
-      // TODO: move 'setMe' to separate handler
-      setMe(prev => {
-        const result = users.find(user => user._id === sessionStorage['id']) ?? prev
-        setBlockedList(prev => result.blockedList ?? prev)
-        return result
-      })
       setContacts(prev => {
         let myContacts = { ...prev }
         for (let user of users) {
@@ -68,12 +71,11 @@ const SocketProvider = ({ children }) => {
 
           //NOTE: It is not guarenteed that the messages map will be updated with the new group by the time the messages will arrive
           // To eliminate race conditions - it will be populated on message received only (if it does not exist).
-          // unless this we are in an update phase...
-          // setMessageGroups(prevGroups => ({ ...prevGroups, [chat._id]: (prevGroups[chat._id] ?? []) }))
 
           socket.emit("messages:get", chat._id) //, groupsMessagesStore[group._id].length)
           // TODO: should blocked chats be displayed?
           if (chat.type === 'private') {
+            // NOTE: in a private chat there are only 2 members - this user and another.
             const contact = chat.members.find(member => member._id != sessionStorage['id'])
             if (!contact) {
               console.debug(`private chat ${chat._id} is missing other member`)
@@ -90,9 +92,9 @@ const SocketProvider = ({ children }) => {
     }
 
     /**
- * bulk of messages of 1 chat specified by chatId
- * @param {MessagesBulk} payload - {chatId: string, messages: [{message: {id: int, senderId, content, timestamp}}]}
- */
+     * bulk of messages of 1 chat specified by chatId
+     * @param {MessagesBulk} payload - {chatId: string, messages: [{message: {id: int, senderId, content, timestamp}}]}
+     */
     function onMessageReceived(payload) {
       setMessageGroups(prev => {
         // //prevent duplicates - when debugging the server
@@ -115,7 +117,7 @@ const SocketProvider = ({ children }) => {
         const serverOffset = payload.messages[payload.messages.length - 1]?.id ?? 0
         const clientOffset = prev[chatId][prev[chatId].length - 1]?.id ?? 0
 
-        if (clientOffset <= serverOffset) {
+        if (clientOffset >= serverOffset) {
           return prev
         }
 
@@ -145,92 +147,103 @@ const SocketProvider = ({ children }) => {
       })
     }
 
+
     /**
      * 
-     * @param {Chat} group 
+     * @param {Chat} chat 
      */
-    function onGroupJoin(group) {
+    function onGroupJoin(chat) {
+
+      //TODO: Check if this function can be replaced by other existing function.
+
       // Refresh all groups and all messages:
       // socket.emit('groups:getAllUser') // all details with groups
       //OR
-      const groupId = group._id
+
       console.log("invited to join group:", groupId)
-      if (!groups.find(g => g._id == groupId) || !Object.keys(messageGroups).includes(groupId)) {
-        // TODO: replace group state to object instead of array
-        setGroupChats(prev => [...prev.filter(g => g._id != group._id), group])
-        setMessageGroups(prev => ({ ...prev, [groupId]: [] }))
-        socket.emit('group:user-join', groupId)
-        console.log("accepted invitation to join group:", groupId)
+      if (!chats[chat._id] || !Object.keys(messageGroups).includes(chat._id)) {
+        setGroupChats(prev => ({ ...prev, [chat._id]: chat }))
+        setMessageGroups(prev => ({ ...prev, [chat._id]: [] }))
+        socket.emit('chat:group:join', chat._id)
+        console.log("accepted invitation to join chat:", chat._id)
       }
       else {
-        console.log('already in group', groupId)
+        console.log('already in chat', chat._id)
       }
     }
 
-    function onGroupLeave(groupId) {
-      console.log("removed from group:", groupId)
-      let remainingGroups = groups.filter(g => g._id == groupId)
-      setGroupChats(remainingGroups)
-      socket.emit('group:user-leave', groupId)
-      console.log("sent request to leave group:", groupId)
-      if (location.pathname.endsWith(groupId)) {
-        navigate('/')
-      }
-    }
+    function onChatsLeave(chatsIds = []) {
+      console.log("removed from chats:", chatsIds)
 
-    function onGroupsLeave(groupIds) {
-      console.log("removed from groups:", groupIds)
-      let remainingGroups = groups.filter(g => !groupIds.includes(g._id))
-      //FIXME: groups is empty - why???
-      //TODO: make sure on refresh the groups will not reconnect - will stay blocked!
-      setGroupChats(remainingGroups)
-      for (const groupId of groupIds) {
-        if (location.pathname.endsWith(groupId)) {
-          navigate('/')
-          return
+      setChats(previousChats => {
+        chatsIds.forEach(chatId => {
+          // remove keys from privateChatMap
+          setPrivateChatsMap(previousPrivates => {
+            delete previousPrivates[previousChats[chatId]?.privateChatContactId]
+            return previousPrivates
+          })
+          // remove chat key
+          delete previousChats[chatId]
+        })
+        return previousChats
+      })
+
+      // if one of the removed chats is open - navigate away
+      const matches = window.location.pathname.match(/chats\/private\/(?<id>[^\/]+)/)
+      if (matches) {
+        const chatId = matches.groups.id
+        if (chatsIds.includes(chatId)) {
+          navigate('/chats')
         }
       }
     }
 
-    function onChatRedirection(groupId) {
-      navigate('/contact/' + groupId)
-    }
-
-    // TODO: move 'setMe' to separate handler
-    /**
-     * 
-     * @param {Contact[]} blockedContacts 
-     */
-    function onContactBlocked(blockedContacts) {
-      setBlockedList(blockedContacts)
+    function onChatRedirection(chatId) {
+      if (Object.keys(chats).length) {
+        const destination = chats[chatId]
+        navigate('/chats/' + destination.type + '/' + destination.id)
+      }
     }
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('profile:received', onProfileReceived)
     socket.on('contacts:received', onContactsReceived);
-    socket.on('contact:blocked', onContactBlocked);
-    socket.on('group:joined', onGroupJoin);
-    socket.on('group:removed', onGroupLeave);
     socket.on('chats:received', onChatsReceived);
     socket.on('message:received', onMessageReceived);
+
+    // socket.on('contact:blocked', onContactBlocked);
+    socket.on('group:joined', onGroupJoin);
+    socket.on('chats:removed', onChatsLeave);
     socket.on('chat:redirect', onChatRedirection);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
+      socket.off('profile:received', onProfileReceived)
       socket.off('contacts:received', onContactsReceived);
-      socket.off('group:joined', onGroupJoin);
-      socket.off('group:removed', onGroupLeave);
+      socket.off('chats:received', onChatsReceived);
       socket.off('message:received', onMessageReceived);
-      socket.off('groups:received', onChatsReceived);
+
+      socket.off('group:joined', onGroupJoin);
+      socket.off('chats:removed', onChatsLeave);
       socket.off('chat:redirect', onChatRedirection);
-      socket.off('contact:blocked', onContactBlocked);
+      // socket.off('contact:blocked', onContactBlocked);
       socket.disconnect()
     };
-  }, [isAuthenticated]);
+  }, [sessionStorage['accessToken']]);
 
   return (
-    <SocketContext.Provider value={{ socket, isConnected, contacts, groups, messageGroups }}>
+    <SocketContext.Provider value={{
+      socket,
+      isConnected,
+      contacts,
+      chats,
+      privateChatsMap,
+      messageGroups,
+      profile,
+      blockedList
+    }}>
       {children}
     </SocketContext.Provider>
   );

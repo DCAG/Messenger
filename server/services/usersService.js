@@ -9,6 +9,10 @@ const verifyCredentials = async (username, password) => {
   return false
 }
 
+const getById = (id) => {
+  return usersRepo.getById(id)
+}
+
 const getByUsername = (username) => {
   return usersRepo.getByUsername(username)
 }
@@ -25,4 +29,4 @@ const update = (id,object) => {
   return usersRepo.update(id,object)
 }
 
-module.exports = {update, verifyCredentials, create, getByUsername, getAll}
+module.exports = {getById, update, verifyCredentials, create, getByUsername, getAll}

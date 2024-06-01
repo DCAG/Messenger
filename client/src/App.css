@@ -65,6 +65,10 @@ body {
   background-color: #7e7e7e;
 }
 
+.chat-item--icon {
+  width: 32px;
+}
+
 /* .item1 { grid-area: header; } */
 .chat-list--area {
   grid-area: list;
@@ -101,6 +105,10 @@ body {
   /* font-size: 16px; */
   /* border: none; */
   /* cursor: pointer; */
+}
+
+.profile-dropbtn--image {
+  width: 32px;
 }
 
 .profile-dropdown {

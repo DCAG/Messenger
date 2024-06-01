@@ -12,17 +12,18 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={<Base />}>
+        <Route path="/login" element={<Login />} />
+        <Route path='/chats/' element={<Base />}>
+          {/* general schema: :type/:id */}
           <Route path='group/new' element={<NewEditGroup />} />
           <Route path='group/:id' element={<Chat />} />
           <Route path='group/:id/edit' element={<NewEditGroup />} />
-          <Route path='contact/newchat' element={<NewChat />} />
-          <Route path='contact/new/:id/:name' element={<Chat />} />
-          <Route path='contact/:id' element={<Chat />} />
+          <Route path='private/new' element={<NewChat />} />
+          <Route path='private/new/:contactId' element={<Chat />} />
+          <Route path='private/:id' element={<Chat />} />
+          <Route path='profile/blocked' element={<BlockedContacts />} />
           <Route path='server' element={<ChatServer />} />
-          <Route path='blockedContacts' element={<BlockedContacts />} />
         </Route>
-        <Route path="/Login" element={<Login />} />
       </Routes>
     </>
   )

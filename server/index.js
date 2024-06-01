@@ -6,7 +6,6 @@ const selfController = require('./controllers/self')
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const connectMongoDB = require('./configs/mongodb')
-const groupsService = require('./services/groupsService')
 
 connectMongoDB()
 const app = express();
@@ -32,49 +31,37 @@ httpServer.listen(port, () => {
 io.use(socketJWT);
 
 const {
+  getMyProfile,
+  getAllContacts,
   getAllUserGroups,
+  getMessages,
+
   createGroup,
   editGroup,
   joinUserToGroup,
   removeUserFromGroup,
   messageChat,
-  messageNewChat,
-  fetchChatHistory,
-  getMessages,
-  blockContact,
-  getAllContacts
+  messageNewPrivateChat,
+  updateBlockedList,
 } = require("./handlers/handlers")(io);
 
 const onConnection = (socket) => {
-  socket.on("group:create", createGroup);
-  socket.on("group:edit", editGroup);
-  socket.on("group:user-join", joinUserToGroup);
-  socket.on("group:user-leave", removeUserFromGroup);
-  socket.on("chat:message", messageChat);
-  socket.on("chat:new:message", messageNewChat);
-  socket.on("chat:fetch", fetchChatHistory);
-  socket.on("messages:get", getMessages);
+  socket.on("profile:getMy", getMyProfile);
   socket.on("contacts:get", getAllContacts);
-  socket.on("chats:getAllUser", getAllUserGroups);
-  socket.on("contact:block", blockContact);
+  socket.on("chats:getMy", getAllUserGroups);
+  socket.on("messages:get", getMessages);
+
+  socket.on("chat:group:create", createGroup);
+  socket.on("chat:group:edit", editGroup);
+  socket.on("chat:join", joinUserToGroup);
+  socket.on("chat:leave", removeUserFromGroup);
+  socket.on("chat:message", messageChat);
+  socket.on("chat:private:new:message", messageNewPrivateChat);
+  socket.on("contacts:update:blocked", updateBlockedList);
   
   const user = socket.request.user; 
-  // const username = user.user.username
   const userId = user?.user?.id
-  // // console.log("connected via socket.io!")
-  // // console.log(user)
   socket.join(`user:${userId}`);
-  // const groups = groupsService.getByUserId(userId)
-  // user?.user?.groups?.forEach(async group => {
-  //   // const fullGroup = groups.find(g=>g._id==group._id)
-  //   const fullGroup = await groupsService.getById(group._id)
-  //   socket.join(`group:${group._id}`)
-  //   let chatDisplayName = group.name
-  //   if(group.type == "contact"){
-  //     chatDisplayName = fullGroup?.members?.find(m=>m._id!=userId)?.username??":unknown:" 
-  //   }
-  //   console.log(`${user.user.username} joined '${chatDisplayName}' [${group._id}]`)
-  // })
 }
 
 io.on("connection", onConnection);

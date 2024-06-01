@@ -13,10 +13,6 @@ const createMessagesTable = (tableName) => {
     content TEXT NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
   );`)
-  /*
-  FOREIGN KEY (sender_user_id) REFERENCES users(id),
-  FOREIGN KEY (group_id) REFERENCES groups(id)
-  */
 }
 
 /**
@@ -30,20 +26,23 @@ const writeMessage = (groupId, senderId, content) => {
   return runQuery(`INSERT INTO ${'c'+groupId} (senderId, content) VALUES (?, ?)`, senderId, content)
 }
 
+/**
+ * 
+ * @param {String} groupId 
+ * @returns 
+ */
 const getAllMessages = (groupId) => {
   return getByQuery(`SELECT * FROM ${'c'+groupId}`)
 }
 
+/**
+ * 
+ * @param {String} groupId 
+ * @param {Number} offset 
+ * @returns 
+ */
 const getAllRemainingMessages = (groupId, offset) => {
   return getByQuery(`SELECT * FROM ${'c'+groupId} WHERE id > ?`,{}, offset)
 }
-
-// const getSingleMessageById = (groupId, id) => {
-//   return getByQuery(`SELECT * FROM ? WHERE id == ?`, {single: true}, groupId, id)
-// }
-
-// const getByUsername = (groupId, username) => {
-//   return getByQuery(`SELECT * FROM ? WHERE username == ?`, {single: true}, groupId, username)
-// }
 
 module.exports = {getAllRemainingMessages, createMessagesTable, getAllMessages, writeMessage} //, create, update, remove}

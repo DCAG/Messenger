@@ -1,8 +1,15 @@
 const chatService = require('../services/chatService')
 const groupsService = require('../services/groupsService')
 const usersService = require('../services/usersService')
+require('../utils/types')
 
 module.exports = (io) => {
+  const getMyProfile = async function () {
+    const socket = this;
+    const contact = await usersService.getByUsername(socket.request.user.user.username);
+    socket.emit('profile:received', contact)
+  }
+
   const getAllContacts = async function () {
     const socket = this;
     const contacts = await usersService.getAll();
@@ -15,34 +22,36 @@ module.exports = (io) => {
     const socketUserId = socketUser?.user?._id
     // get all chats
     const groups = await groupsService.getByUserId(socketUserId) ?? []
-    socket.emit('chats:received', groups)
+    // socket.emit('chats:received', groups)
 
     // join all groups chats and unblocked private chats
     const user = await usersService.getByUsername(socketUser.user.username)
     const blockedList = user.blockedList
-    groups
-      .filter(group => group.type !== 'private')
-      .forEach(group => {
-        socket.join(`chat:${group._id}`)
-        console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    // groups
+    //   .filter(group => group.type !== 'private')
+    //   .forEach(group => {
+    //     socket.join(`chat:${group._id}`)
+    //     console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    //   })
+    // groups
+    //   .filter(group => group.type === 'private' &&
+    //     !group.members.some(member => blockedList.includes(member._id)))
+    //   .forEach(group => {
+    //     socket.join(`chat:${group._id}`)
+    //     console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    //   })
+    // shorter version (might be less readable)
+    const unblockedGroups = groups.filter(group => {
+      // if on private chat the other member is not in blocked list then join to the chat
+      return group.type!=='private' ||
+        !group.members.some(member=>blockedList.includes(member._id))
     })
-    groups
-      .filter(group => group.type === 'private' && 
-                      !group.members.some(member=>blockedList.includes(member._id)))
-      .forEach(group => {
-        socket.join(`chat:${group._id}`)
-        console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
-    })
-    // // shorter version (might be less readable)
-    // const unblockedGroups = groups.filter(group => {
-    //   // if on private chat the other member is not in blocked list then join to the chat
-    //   return group.type!=='private' ||
-    //     !group.members.some(member=>blockedList.includes(member._id))
-    // })
-    // for(group of unblockedGroups){
-    //   socket.join(`chat:${group._id}`)
-    //   console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
-    // }
+    for(group of unblockedGroups){
+      socket.join(`chat:${group._id}`)
+      console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
+    }
+    // sending the user only unblocked chats
+    socket.emit('chats:received', unblockedGroups)
   }
 
   const createGroup = async function (payload) {
@@ -57,12 +66,13 @@ module.exports = (io) => {
       io.to(`user:${userId}`).emit("group:joined", group) //group._id);
     })
   };
+  
   const editGroup = async function (payload) {
     const socket = this;
     const { _id, name, description, members } = payload
     const oldGroup = await groupsService.getById(_id)
-    const membersAdded = members.filter(m=>!oldGroup.members.find(om=>om._id==m))
-    const membersRemoved = oldGroup.members.filter(m=>!members.includes(m._id.toString()))
+    const membersAdded = members.filter(m => !oldGroup.members.find(om => om._id == m))
+    const membersRemoved = oldGroup.members.filter(m => !members.includes(m._id.toString()))
     const group = await groupsService.update(_id, { type: 'group', name, description, members })
     // NOTE: instead maybe - send which members were removed so each will find himself and send a request to leave
     // here is a start to this idea: io.to(`group:${group._id}`).emit("group:removed", {group._id, members: membersRemoved})
@@ -76,24 +86,113 @@ module.exports = (io) => {
     })
   };
 
+
+  const removeUserFromGroup = async function (groupId) {
+    const socket = this;
+    socket.leave(`group:${groupId}`)
+    console.debug(`user ${socket.request.user.user.username} left ${groupId}`)
+  };
+
+  /**
+   * 
+   * @param {NewMessage} message 
+   * @emits 'message:received' 
+   */
+  const messageChat = async function (message) {
+    const socket = this;
+    const user = socket.request.user;
+    const userId = user?.user?._id
+    const { chatId, content } = message
+    const chat = await groupsService.getById(chatId)
+    if (!chat) {
+      console.warn(`user ${userId} tried to send message to chat ${chatId} which does not exist`)
+      return
+    }
+    if (!chat.members.find(member => member._id == userId)) {
+      console.warn(`user ${userId} tried to send message to chat ${chatId} which he is not a member of`)
+      return
+    }
+    console.log(`user ${userId} sent message to chat ${chatId} with the content ${content}`)
+    const result = await chatService.writeMessage(chatId, userId, content)
+    const messages = await chatService.getAllRemainingMessages(chatId, result.lastID - 1)
+    io.to(`chat:${chatId}`).emit("message:received", { chatId, messages })
+  };
+
+  /**
+   * 
+   * @param {NewPrivateChatAndMessage} message 
+   */
+  const messageNewPrivateChat = async function (message) {
+    // TODO: check if user is blocked!!! either direction!
+    const socket = this;
+    const socketUser = socket.request.user;
+    const userId = socketUser?.user?._id
+    const chats = await groupsService.getByUserId(userId) ?? []
+    const { contactId, content } = message
+    const user = await usersService.getById(userId)
+    const contact = await usersService.getById(contactId)
+    if (!contact) {
+      // contact doesnt exist
+      socket.emit('error', { content: `contact with id ${contactId} does not exist. messages cannot be sent to contacts that do not exist` })
+      return
+    }
+    if (user.blockedList.map(b => b._id.toString()).includes(contactId)) {
+      // user blocked contact
+      socket.emit('error', { content: `contact with id ${contactId} is in your blocked list.` })
+      return
+    }
+    let chat = chats.find(chat => chat.type == 'private' && chat.members.map(m => m._id.toString()).includes(contactId))
+    if (!chat) {
+      // chat doesn't exist - create it
+      const newChat = {
+        type: 'private',
+        members: [userId, contactId]
+      }
+      chat = await groupsService.create(newChat)
+      chat = await groupsService.getById(chat._id) // with populated members
+    }
+
+    // register message
+    await chatService.writeMessage(chat._id, userId, content)
+
+    // join users to chat room
+    io.sockets.adapter.rooms.get(`user:${userId}`)?.forEach(socketId => {
+      const targetSocket = io.sockets.sockets.get(socketId);
+      targetSocket.join(`chat:${chat._id}`)
+    })
+    if (!contact.blockedList.map(b => b._id.toString()).includes(userId)) {
+      // join contact to private chat room only if they did not block this user
+      io.sockets.adapter.rooms.get(`user:${contactId}`)?.forEach(socketId => {
+        const targetSocket = io.sockets.sockets.get(socketId);
+        targetSocket.join(`chat:${chat._id}`)
+      })
+    }
+
+    // update chats for all clients (add the new chat - if they didn't already have it)
+    io.to(`chat:${chat._id}`).emit("chats:received", [].concat(chat))
+
+    // redirect this user to chat - to use the shorter message flow
+    socket.emit('chat:redirect', chat._id)
+  };
+
   //region joinUserToGroup
-  const joinUserToGroup = async function (groupId, messagesOffset=0) {
+  const joinUserToGroup = async function (groupId, messagesOffset = 0) {
     const socket = this;
     const user = socket.request.user;
     const username = user?.user?.username
     const userId = user?.user?._id
     const group = await groupsService.getById(groupId)
-    if(!group){
-      console.warn(`attempt to join user ${username} to group non existent group: ${groupId}` )
+    if (!group) {
+      console.warn(`attempt to join user ${username} to group non existent group: ${groupId}`)
       return
     }
 
     let chatDisplayName = group.name
-    if(group.type == "contact"){ 
-      chatDisplayName = group?.members?.find(m=>m._id!=userId)?.username??":unknown:" 
+    if (group.type == "contact") {
+      chatDisplayName = group?.members?.find(m => m._id != userId)?.username ?? ":unknown:"
     }
-    if(!group.members?.some(m=>m._id == userId)){
-      console.warn(`attempt to join user ${username} to group ${chatDisplayName} which they are not member of` )
+    if (!group.members?.some(m => m._id == userId)) {
+      console.warn(`attempt to join user ${username} to group ${chatDisplayName} which they are not member of`)
     }
     socket.join(`group:${groupId}`)
     console.log(`${user.user.username} joined '${chatDisplayName}' [${group._id}]`)
@@ -104,108 +203,52 @@ module.exports = (io) => {
     })
   };
 
-  const removeUserFromGroup = async function (groupId) {
+  const getMessages = async function (chatId, clientOffset = 0) {
     const socket = this;
-    socket.leave(`group:${groupId}`)
-    console.debug(`user ${socket.request.user.user.username} left ${groupId}`)
-  };
-  const messageChat = async function (msgObject) {
-    const socket = this;
-    const user = socket.request.user;
-    const userId = user?.user?._id
-    const username = user?.user?.username
-    const { groupId, type, content } = msgObject
-    const targetGroup = await groupsService.getById(groupId)
-    if(!targetGroup){
-      console.warn(`user ${userId} tried to send message to group ${groupId} which does not exist`)
-      return
-    }
-    if(!targetGroup.members.find(m=>m._id==userId)){
-      console.warn(`user ${userId} tried to send message to group ${groupId} which he is not a member of`)
-      return
-    }
-    const result = await chatService.writeMessage(groupId, userId, content)
-    const result2 = await chatService.getAllRemainingMessages(groupId, result.lastID - 1)
-    // in case the group is new
-    io.to(`group:${groupId}`).emit("message:received", { groupId, ...result2[0] })
-    //socket.to(`group:${groupId}`, { sender: {id, username}, content })
-  };
-  const messageNewChat = async function (msgObject) {
-    const socket = this;
-    const user = socket.request.user;
-    const userId = user?.user?._id
-    const username = user?.user?.username
-    let groups = await groupsService.getByUserId(userId) ?? []
-    const { groupId: targetId, type, content } = msgObject
-    let group = groups.find(g => g.type == 'contact' && g.members.includes(targetId))
-    if (!group) {
-      //direct - contact
-      const newGroup = {
-        type: 'contact',
-        description: '',
-        name: '',
-        members: [userId, targetId]
-      }
-      group = await groupsService.create(newGroup) // create if doesn't exist
-      group = await groupsService.getById(group._id) // populated with users
-    }
-
-    const writeMsgResult = await chatService.writeMessage(group._id, userId, content)
-    // const loggedMessage = await chatService.getAllRemainingMessages(group._id, writeMsgResult.lastID - 1)
-    
-    group.members.forEach(async (member) => {
-      // client will register group, request to join and fetch messages
-      io.to(`user:${member._id}`).emit("group:joined", group);
-    })
-    
-    // io.to(`group:${groupId}`).emit("message:received", { groupId, ...loggedMessage[0] })
-    // redirect anyway...
-    socket.emit('chat:redirect', group._id)
-  };
-  const fetchChatHistory = async function (groupsIds) {
-    const socket = this;
-    groupsIds.forEach(async (gid) => {
-      const messages = await chatService.getAllMessages(gid)
-      socket.emit('message:received', { chatId: gid, messages: messages, offset: 0 })
-    })
-  };
-
-  const getMessages = async function(chatId, clientOffset=0) {
-    const socket = this;
-    const messages = await chatService.getAllRemainingMessages(chatId,clientOffset)
+    const messages = await chatService.getAllRemainingMessages(chatId, clientOffset)
     socket.emit('message:received', { chatId, messages })
   }
 
   /**
    * 
-   * @param {Array<String>} blockedContacts 
+   * @param {Array<String>} blockedList 
    */
-  const blockContact = async function (blockedContacts) {
+  const updateBlockedList = async function (blockedList) {
     const socket = this;
     const socketUser = socket?.request?.user;
-    const user = await usersService.getByUsername(socketUser.user.username)
-    user._doc.blockedList = blockedContacts 
+    const user = await usersService.getById(socketUser.user._id)
+    const unblockedContactsIds = user.blockedList.filter(contactId => !blockedList.includes(contactId.toString()))
+    user.blockedList = [...new Set(blockedList)]
+    // update user profile with new list
     const updatedUser = await usersService.update(user._id, user)
-    socket.emit('contact:blocked', updatedUser._doc.blockedList) // TODO: if I want to return the new object need to change in the model.
-    const thisUserGroups = await groupsService.getByUserId(socketUser.user._id)
-    const directChatsToLeave = thisUserGroups.filter(g=>g.type == 'contact' && g.members.some(m=>blockedContacts.includes(m._id.toString()))).map(g=>g._id)
-    directChatsToLeave.forEach(chat => socket.leave(`group:${chat}`))
-    //TODO: test and implement on client side
-    socket.emit('group:removed',[].concat(directChatsToLeave))
+    socket.emit('profile:received', updatedUser)
+    // get all **private** chats with blocked contacts AND unblocked contacts
+    const chats = await groupsService.getByUserId(socketUser.user._id)
+    const blockedChatsIds = chats.filter(c => c.type == 'private' && c.members.some(m => blockedList.includes(m._id.toString()))).map(c => c._id.toString())
+    const unblockedChats = chats.filter(c => c.type == 'private' && c.members.some(m => unblockedContactsIds.map(id=>id.toString()).includes(m._id.toString())))
+
+    // leave all chats with blocked contacts
+    blockedChatsIds.forEach(chatId => socket.leave(`chat:${chatId}`))
+    // remove all these chats on client
+    socket.emit('chats:removed', [].concat(blockedChatsIds))
+
+    // join and update client on all unblocked chats
+    unblockedChats.forEach(chat => socket.join(`chat:${chat._id}`))
+    socket.emit('chats:received', unblockedChats)
   };
 
 
   return {
+    getMyProfile,
+    getAllContacts,
     getAllUserGroups,
+    getMessages,
     createGroup,
     editGroup,
     joinUserToGroup,
     removeUserFromGroup,
     messageChat,
-    messageNewChat,
-    fetchChatHistory,
-    getMessages,
-    blockContact,
-    getAllContacts
+    messageNewPrivateChat,
+    updateBlockedList,
   }
 }

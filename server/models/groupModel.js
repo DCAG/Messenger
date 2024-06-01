@@ -7,8 +7,8 @@ const groupSchema = new mongoose.Schema(
       enum: ['private', 'group'],
       default: 'private',
     },
-    name: { type: String },
-    description: { type: String },
+    name: { type: String, default: '' },
+    description: { type: String, default: '' },
     members: [{type: mongoose.Schema.Types.ObjectId, ref: 'user'}],
   },
   {

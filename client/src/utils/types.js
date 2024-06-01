@@ -16,6 +16,8 @@
  * @property {ChatType} type
  * @property {String} name
  * @property {Contact[]} members
+ * @property {String} privateChatName exist in client and for private chats only. should be removed before sending to server.
+ * @property {String} privateChatContactId exist in client and for private chats only. should be removed before sending to server.
  */
 
 /**
