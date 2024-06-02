@@ -49,10 +49,8 @@ const onConnection = (socket) => {
   socket.on("contacts:get", getContacts);
   socket.on("chats:getMy", getMyChats);
   socket.on("messages:get", getMessages);
-
   socket.on("chat:group:create", createGroupChat);
   socket.on("chat:group:edit", editGroupChat);
-  // socket.on("chat:join", joinUserToGroup);
   socket.on("chat:leave", leaveChat);
   socket.on("chat:message", messageChat);
   socket.on("chat:private:new:message", messageNewPrivateChat);
