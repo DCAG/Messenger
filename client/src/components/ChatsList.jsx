@@ -1,59 +1,49 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import groupLogo from '../assets/group-small.png'
-import contactLogo from '../assets/contact-small.png'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import useSocket from '../utils/useSocket'
+import ChatsListActions from './ChatsListActions'
+import { CHAT_IMG } from '../utils/images'
+import '../utils/types'
 
-
-const CHAT_TYPES = {
-  'contact':contactLogo,
-  'group':groupLogo,
-}
 
 function ChatsList() {
-  const navigate = useNavigate()
-  const chatsList = [
-    {id: '1', type: 'contact', name: 'Alice'},
-    {id: '2', type: 'contact', name: 'Julia'},
-    {id: '3', type: 'group', name: 'Beit-Beit'},
-    {id: '4', type: 'group', name: 'Bnei Dodim'},
-    {id: '5', type: 'contact', name: 'Eitan'},
-    {id: '6', type: 'contact', name: 'Dafna'},
-    {id: '7', type: 'contact', name: 'Alice'},
-    {id: '8', type: 'contact', name: 'Julia'},
-    {id: '9', type: 'group', name: 'Beit-Beit'},
-    {id: '10', type: 'group', name: 'Bnei Dodim'},
-    {id: '11', type: 'contact', name: 'Eitan'},
-    {id: '12', type: 'contact', name: 'Dafna'},
-  ]
-  const handleFilter = () => {
-    
+  const { chats } = useSocket()
+  const [chatsFilter, setChatsFilter] = useState('')
+  const [chatsList, setChatsList] = useState({})
+
+  useEffect(() => {
+    setChatsList(prev=>chats??prev)
+  },[chats])
+
+  const handleFilter = (e) => {
+    setChatsFilter(e.target.value)
   }
+
+  const chatFilter = function(id) {
+    return !chatsFilter || chats[id].type == chatsFilter
+  }
+
   return (
     <div>
       <h4 className='chat-list--header'>
-      Chats
+        Chats
       </h4>
-      <div className='chat-list--actions'>
-        <select value={""} onChange={handleFilter}>
-          <option value="" disabled>Filter By</option>
-          <option value="all">Show All</option>
-          <option value="unread">Unread</option>
-          <option value="groups">Groups</option>
-          <option value="contacts">Contacts</option>
-        </select>
-        <button onClick={e=>navigate('/newgroup')}>New Group</button>
-        <button onClick={e=>navigate('/newchat')}>New Chat</button>
-      </div>
+      <ChatsListActions onFilterChange={handleFilter} />
 
       <ul className='chat-list'>
         {
-          chatsList.map(chatItem => {
+          // Object.keys(chats).length > 0 && 
+          Object.keys(chatsList).filter(chatFilter).map(id => {
+            const chat = chats[id]
             return (
-              <li key={chatItem.id} className='chat-item'>
-                <Link to={chatItem.id}>
-                  <img src={CHAT_TYPES[chatItem.type]} style={{width:'32px'}} alt={`${chatItem.type} image`} />
+              <li key={chat._id} className='chat-item'>
+                <Link to={chat.type + '/' + chat._id}>
+                  <img src={CHAT_IMG[chat.type]} className='chat-item--icon' alt={`${chat.type} image`} />
                   <span>
-                  {chatItem.name}
+                    {
+                      /* NOTE: property 'privateChatName' was added in socketContext.jsx */
+                      chat.type === 'private' ? chat.privateChatName : (chat.type === 'group' ? chat.name : ':unknown:')
+                    }
                   </span>
                 </Link>
               </li>
@@ -61,7 +51,6 @@ function ChatsList() {
           })
         }
       </ul>
-      {}
     </div>
   )
 }

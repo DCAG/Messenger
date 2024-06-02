@@ -1,4 +1,4 @@
-id|username|password|password_hash|createdDate|first_name|last_name|nickname|status|bio
+id|username|password|passwordHash|createdDate|firstName|lastName|nickname|status|bio
 1|alice|p@ssw0rd|hash1|2024-05-16|Alice|Smith|Ali|active|Software engineer with a passion for coding.
 2|bob|secret123|hash2|2024-05-16|Bob|Johnson|Bobby|inactive|Designer and coffee enthusiast.
 3|charlie|qwerty|hash3|2024-05-16|Charlie|Brown|Chuck|active|Musician and nature lover.

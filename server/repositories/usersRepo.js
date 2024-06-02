@@ -1,60 +1,43 @@
-const sqlite3 = require('sqlite3').verbose();
-const sqlite = require('sqlite')
-
-const fs = require('node:fs');
-
-const DB_PATH = process.env.DB_PATH || 'chat.db'
- 
-const getByQuery = async (query, options, ...argArray) => {
-  let db;
-  let result;
-
-  try{
-    const currentDirectory = process.cwd();
-    console.log(`Current directory: ${currentDirectory}`);
-
-    await fs.exists(DB_PATH, (e) => {
-      console.log(e ? 'it exists' : 'no passwd!');
-    });
-    db = await sqlite.open({
-      filename: DB_PATH,
-      driver: sqlite3.Database,
-      mode: sqlite3.OPEN_READONLY
-    })
-    console.log('Connected to the %s database.', DB_PATH);
-    console.debug("query: %s, args: %s", query, argArray)
-    if(options?.single){
-      result = await db.get(query, argArray)
-    }
-    else{
-      result = await db.all(query, argArray)
-    }
-    //console.debug(result);
-    await db.close();
-  }
-  catch(err){
-    console.error(err.message);
-    throw err
-  }
-
-  return result;
-}
+const user = require('../models/userModel')
+const creds = require('../models/credsModel')
 
 const getById = (id) => {
-  return getByQuery(`SELECT * FROM users WHERE id == ?`, {single: true}, id)
+  return user.findById(id).populate('groups').exec()
 }
 
 const getByUsername = (username) => {
-  return getByQuery(`SELECT * FROM users WHERE username == ?`, {single: true}, username)
+  return user.findOne({username: username}).populate('groups').exec()
 }
 
 const getCredentials = (username) => {
-  return getByQuery(`SELECT password, password_hash FROM credentials WHERE username == ?`, {single: true}, username)
+  return creds.findOne({username: username})
 }
 
 const getAll = () => {
-  return getByQuery(`SELECT * FROM users`)
+  return user.find()
 }
 
+const create = async (object) => {
+  let userCreds = {
+    username: object.username,
+    password: object.password,
+    passwordHash: object.passwordHash
+  }
+  
+  console.log("userCreds",userCreds)
+  const credsDoc = await creds.create(userCreds)
+  
+  delete object.password
+  delete object.passwordHash
+  let userObject = {...object, _id: credsDoc._id}
 
-module.exports = {getByQuery, getAll, getCredentials, getById, getByUsername} //, create, update, remove}
+  console.log("userObject", userObject)
+
+  return await user.create(userObject)
+}
+
+const update = (id, object) => {
+  return user.findByIdAndUpdate(id, object, {returnDocument: 'after'})
+}
+
+module.exports = {update, create, getAll, getCredentials, getById, getByUsername} //, create, update, remove}

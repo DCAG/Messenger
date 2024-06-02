@@ -65,6 +65,10 @@ body {
   background-color: #7e7e7e;
 }
 
+.chat-item--icon {
+  width: 32px;
+}
+
 /* .item1 { grid-area: header; } */
 .chat-list--area {
   grid-area: list;
@@ -101,6 +105,10 @@ body {
   /* font-size: 16px; */
   /* border: none; */
   /* cursor: pointer; */
+}
+
+.profile-dropbtn--image {
+  width: 32px;
 }
 
 .profile-dropdown {
@@ -207,9 +215,17 @@ body {
   padding-left: 44px;
 }
 
+/* scroll to bottom: https://code.hnldesign.nl/scrolltobottom/ */
+
 .conversation {
   overflow: auto;
   height: calc(100% - 80px);
+  overflow: auto;
+  /* height: 100px; */
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-anchor: auto !important; /*  See https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-anchor */
+  transform: translateZ(0); /* fixes a bug in Safari iOS where the scroller doesn't update */
 }
 
 .messages-list {
@@ -218,15 +234,20 @@ body {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  height: max-content;
+  transform: translateZ(0); /* fixes a bug in Safari iOS where the scroller doesn't update */
 }
 
 .message {
+  width: -moz-fit-content;
   width: fit-content;
   height: -moz-max-content;
   /* border-style: solid; */
   border-width: 1px;
   padding: 0.5rem;
   margin: 2px;
+  height: max-content;
+  transform: translateZ(0); /* fixes a bug in Safari iOS where the scroller doesn't update */
 }
 
 .message-me {

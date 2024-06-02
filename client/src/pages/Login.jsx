@@ -2,12 +2,14 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../utils/useAuth'
 import axios from 'axios'
+import useSocket from '../utils/useSocket'
 
 const LOGIN_URL = 'http://localhost:3000/auth/login'
 
 function Login() {
   const navigate = useNavigate()
   const { loginUser } = useAuth()
+  const {socket} = useSocket()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +24,9 @@ function Login() {
     try {
       const { data } = await axios.post(LOGIN_URL, loginData)
       loginUser(data.accessToken, data.user)
-      navigate('/')
+      socket.auth = {token: data.accessToken}
+      socket.disconnect().connect();
+      navigate('/chats')
     } catch (error) {
       console.error(error)
       // setFormError(error.response?.data?.message??error)
