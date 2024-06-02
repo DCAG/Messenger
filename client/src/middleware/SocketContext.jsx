@@ -16,8 +16,12 @@ const SocketProvider = ({ children }) => {
   const [messageGroups, setMessageGroups] = useState({})
   const [profile, setProfile] = useState({})
   const [blockedList, setBlockedList] = useState([])
+  const [pendingRedirection, setPendingRedirection] = useState(null)
 
   useEffect(() => {
+    //NOTE: inside this closure all the states above will remain with initial state (stale data)
+    // to interact with them the either set new states and handle them in another useEffect or inside any setState
+
     const token = sessionStorage['accessToken'];
     if (!isConnected && token) {
       socket.auth = { token }
@@ -64,6 +68,7 @@ const SocketProvider = ({ children }) => {
      * @param {Chat[]} myChats 
      */
     function onChatsReceived(myChats) {
+      console.log("myChats.length", myChats.length)
       setChats(prev => {
         let updatedChats = { ...prev }
         myChats.forEach(chat => {
@@ -72,7 +77,7 @@ const SocketProvider = ({ children }) => {
           //NOTE: It is not guarenteed that the messages map will be updated with the new group by the time the messages will arrive
           // To eliminate race conditions - it will be populated on message received only (if it does not exist).
 
-          socket.emit("messages:get", chat._id) //, groupsMessagesStore[group._id].length)
+          socket.emit("messages:get", chat._id)
           // TODO: should blocked chats be displayed?
           if (chat.type === 'private') {
             // NOTE: in a private chat there are only 2 members - this user and another.
@@ -97,18 +102,14 @@ const SocketProvider = ({ children }) => {
      */
     function onMessageReceived(payload) {
       setMessageGroups(prev => {
-        // //prevent duplicates - when debugging the server
-        // let msgExist = prev[payload.groupId].find(msg=>msg.id==payload.id)
-        // if(msgExist){
-        //   return prev
-        // }
         const chatId = payload.chatId
         if (!prev[chatId]) {
           return {
             ...prev,
             [chatId]: payload.messages.map(message => ({
               id: message.id,
-              sender: message.senderId, // TODO: replace with username
+              // senderId is replaced with human readable name inside the conversation area in the chat page when the message is displayed
+              sender: message.senderId,
               message: message.content
             }))
           }
@@ -147,31 +148,6 @@ const SocketProvider = ({ children }) => {
       })
     }
 
-
-    /**
-     * 
-     * @param {Chat} chat 
-     */
-    function onGroupJoin(chat) {
-
-      //TODO: Check if this function can be replaced by other existing function.
-
-      // Refresh all groups and all messages:
-      // socket.emit('groups:getAllUser') // all details with groups
-      //OR
-
-      console.log("invited to join group:", groupId)
-      if (!chats[chat._id] || !Object.keys(messageGroups).includes(chat._id)) {
-        setGroupChats(prev => ({ ...prev, [chat._id]: chat }))
-        setMessageGroups(prev => ({ ...prev, [chat._id]: [] }))
-        socket.emit('chat:group:join', chat._id)
-        console.log("accepted invitation to join chat:", chat._id)
-      }
-      else {
-        console.log('already in chat', chat._id)
-      }
-    }
-
     function onChatsLeave(chatsIds = []) {
       console.log("removed from chats:", chatsIds)
 
@@ -189,7 +165,8 @@ const SocketProvider = ({ children }) => {
       })
 
       // if one of the removed chats is open - navigate away
-      const matches = window.location.pathname.match(/chats\/private\/(?<id>[^\/]+)/)
+      // NOTE: useParams() from react-router-dom did not work here - probably because this is inside useEffect closure (read NOTE at the top)
+      const matches = window.location.pathname.match(/chats\/(private|group)\/(?<id>[^\/]+)/)
       if (matches) {
         const chatId = matches.groups.id
         if (chatsIds.includes(chatId)) {
@@ -199,10 +176,8 @@ const SocketProvider = ({ children }) => {
     }
 
     function onChatRedirection(chatId) {
-      if (Object.keys(chats).length) {
-        const destination = chats[chatId]
-        navigate('/chats/' + destination.type + '/' + destination.id)
-      }
+      setPendingRedirection(chatId)
+      // NOTE: see separate useEffect that handles redirection
     }
 
     socket.on('connect', onConnect);
@@ -211,9 +186,6 @@ const SocketProvider = ({ children }) => {
     socket.on('contacts:received', onContactsReceived);
     socket.on('chats:received', onChatsReceived);
     socket.on('message:received', onMessageReceived);
-
-    // socket.on('contact:blocked', onContactBlocked);
-    socket.on('group:joined', onGroupJoin);
     socket.on('chats:removed', onChatsLeave);
     socket.on('chat:redirect', onChatRedirection);
 
@@ -224,14 +196,23 @@ const SocketProvider = ({ children }) => {
       socket.off('contacts:received', onContactsReceived);
       socket.off('chats:received', onChatsReceived);
       socket.off('message:received', onMessageReceived);
-
-      socket.off('group:joined', onGroupJoin);
       socket.off('chats:removed', onChatsLeave);
       socket.off('chat:redirect', onChatRedirection);
-      // socket.off('contact:blocked', onContactBlocked);
       socket.disconnect()
     };
   }, [sessionStorage['accessToken']]);
+
+  useEffect(() => {
+    if (pendingRedirection) {
+      const destination = chats[pendingRedirection]
+      if (destination) {
+        setPendingRedirection(null)
+        navigate('/chats/' + destination.type + '/' + destination.id);
+      } else {
+        console.warn('No chats available for redirection');
+      }
+    }
+  }, [pendingRedirection, chats])
 
   return (
     <SocketContext.Provider value={{

@@ -18,22 +18,14 @@ function BlockedContacts() {
 
   const handleChange = (selectedKV) => {
     const contactsIds = selectedKV.map(m=>m.id)
-    socket.emit('contacts:update:blocked',[].concat(contactsIds))
+    socket.emit('contacts:blocked:update',[].concat(contactsIds))
   }
 
   const prepareContactsKeyValuePairs = () => {
     return Object.values(contacts)
-      // remove current user from available contacts - user cannot block himself.
-      .filter(c=>c._id!=sessionStorage['id'])
       // converting to supported object structure by this component
       .map(c => ({id: c._id, name: c.username}))
   }
-
-  // const prepareSelectedKeyValuePairs = () => {
-  //   return blockedList
-  //     // converting to supported object structure by this component
-  //     .map(c => ({id: c._id, name: c.username}))
-  // }
 
   return (
     <div className='chat-window--area'>

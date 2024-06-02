@@ -3,19 +3,27 @@ import useSocket from '../utils/useSocket'
 
 /**
  * 
- * @param {*} id 
- * @param {ChatType} type 
+ * @param {Chat} chat
  * @returns 
  */
-function ChatConversation({id, type}) {
-  const { messageGroups, contacts } = useSocket()
-  const [conversation, setConversation] = useState([].concat(messageGroups[id] ?? []))
-
+function ChatConversation({chat}) {
+  const { messageGroups } = useSocket()
+  const [conversation, setConversation] = useState([].concat(messageGroups[chat?._id] ?? []))
+  const [chatMembers, setChatMembers] = useState({})
   const userId = sessionStorage['id']
 
   useEffect(() => {
-    setConversation([].concat(messageGroups[id] ?? []))
-  }, [messageGroups, id])
+    setChatMembers(prev => {      
+      chat?.members.forEach(m => {
+        prev[m._id] = m
+      })
+      return prev
+    })
+  },[chat])
+
+  useEffect(() => {
+    setConversation([].concat(messageGroups[chat?._id] ?? []))
+  }, [messageGroups, chat])
 
   const getMessageStyle = (content) => {
     if(/^[\u0590-\u05fe]+/.test(content)){
@@ -30,11 +38,11 @@ function ChatConversation({id, type}) {
       <ul className='messages-list'>
         {
           conversation && conversation.map(msg => {
-            const sender = contacts[msg.sender]
+            const sender = chatMembers[msg.sender]
             return (
               <li key={msg.id} className={userId === sender?._id ? 'message message-me' : 'message message-others'} style={getMessageStyle(msg.message)}>
-                <span style={(type!=='group' || userId === sender?._id) ? { display: 'none' } : {}} className='message-sender--title'>
-                  {sender.username}<br />
+                <span style={(chat.type!=='group' || userId === sender?._id) ? { display: 'none' } : {}} className='message-sender--title'>
+                  {sender?.username}<br />
                 </span>
                 <span>{msg.message}</span>
               </li>

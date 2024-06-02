@@ -60,7 +60,7 @@ function Chat() {
   return (
     <div className='chat-window--area'>
       <ChatHeader chat={chat} />
-      <ChatConversation id={chat?._id} type={chat?.type} />
+      <ChatConversation chat={chat} />
       <ChatFooter id={chat?._id} contactId={contactId} />
     </div>
   )

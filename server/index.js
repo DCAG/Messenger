@@ -32,32 +32,31 @@ io.use(socketJWT);
 
 const {
   getMyProfile,
-  getAllContacts,
-  getAllUserGroups,
+  getContacts,
+  getMyChats,
   getMessages,
-
-  createGroup,
-  editGroup,
-  joinUserToGroup,
-  removeUserFromGroup,
+  createGroupChat,
+  editGroupChat,
+  // joinUserToGroup,
+  leaveChat,
   messageChat,
   messageNewPrivateChat,
-  updateBlockedList,
+  updateBlockedContacts,
 } = require("./handlers/handlers")(io);
 
 const onConnection = (socket) => {
   socket.on("profile:getMy", getMyProfile);
-  socket.on("contacts:get", getAllContacts);
-  socket.on("chats:getMy", getAllUserGroups);
+  socket.on("contacts:get", getContacts);
+  socket.on("chats:getMy", getMyChats);
   socket.on("messages:get", getMessages);
 
-  socket.on("chat:group:create", createGroup);
-  socket.on("chat:group:edit", editGroup);
-  socket.on("chat:join", joinUserToGroup);
-  socket.on("chat:leave", removeUserFromGroup);
+  socket.on("chat:group:create", createGroupChat);
+  socket.on("chat:group:edit", editGroupChat);
+  // socket.on("chat:join", joinUserToGroup);
+  socket.on("chat:leave", leaveChat);
   socket.on("chat:message", messageChat);
   socket.on("chat:private:new:message", messageNewPrivateChat);
-  socket.on("contacts:update:blocked", updateBlockedList);
+  socket.on("contacts:blocked:update", updateBlockedContacts);
   
   const user = socket.request.user; 
   const userId = user?.user?.id

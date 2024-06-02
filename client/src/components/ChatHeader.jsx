@@ -15,7 +15,7 @@ function ChatHeader({ chat }) {
   }, [chat, blockedList])
 
   useEffect(() => {
-    if (chat) {
+    if (chat?._id) {
       setChatName(getChatName(chat))
       // FUTURE: statusText will present if someone is typing...
       setStatusText(getStatusText(chat))
@@ -75,12 +75,12 @@ function ChatHeader({ chat }) {
   }
 
   const editGroup = () => {
-    navigate(`group/${id}/edit`)
+    navigate(`/chats/group/${chat?._id}/edit`)
   }
 
   const leaveGroup = () => {
     // TODO: draw the entire flow
-    socket.emit("chat:group:leave")
+    socket.emit("chat:leave", chat?._id)
   }
 
   const blockUnblockContact = () => {
@@ -88,10 +88,10 @@ function ChatHeader({ chat }) {
     if (chat.type === 'private') {
       const contactId = chat.privateChatContactId
       if(!isBlocked){
-        socket.emit('contacts:update:blocked', blockedList.concat(contactId))
+        socket.emit('contacts:blocked:update', blockedList.concat(contactId))
       }
       else{
-        socket.emit('contacts:update:blocked', blockedList.filter(blockedId => blockedId!==contactId))
+        socket.emit('contacts:blocked:update', blockedList.filter(blockedId => blockedId!==contactId))
       }
     }
   }
