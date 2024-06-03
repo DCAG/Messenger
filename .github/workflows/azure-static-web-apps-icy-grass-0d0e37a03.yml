@@ -29,6 +29,8 @@ jobs:
         run: npm -v
       - name: Build the app
         run: cd ./client && npm install && npm run build
+      - name: Copy staticwebapp.config to build directory
+        run: cp ./.github/workflows/staticwebapp.config.json ./client/dist/ 
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
