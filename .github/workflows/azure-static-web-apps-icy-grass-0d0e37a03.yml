@@ -28,7 +28,7 @@ jobs:
       - name: Display npm version
         run: npm -v
       - name: Build the app
-        run: cd ./client && npm install && npm run build
+        run: cd ./client && npm install && vite build
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
