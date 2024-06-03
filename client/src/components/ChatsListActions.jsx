@@ -17,6 +17,7 @@ function ChatsListActions({onFilterChange}) {
       <option value="group">Groups</option>
       {/* contacts are private-chats here */}
       <option value="private">Contacts</option> 
+      <option value="online">Online</option> 
     </select>
     <button onClick={()=>navigate('group/new')}>New Group</button>
     <button onClick={()=>navigate('private/new')}>New Private Chat</button>

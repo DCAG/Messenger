@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "runtimeExecutable": "nodemon",
-            "runtimeArgs": ["--env-file=.env"],
+            "runtimeArgs": ["--env-file=.env.development"],
             "console": "integratedTerminal",
             "restart": true,
             "skipFiles": [

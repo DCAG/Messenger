@@ -24,14 +24,14 @@ const create = async (object) => {
     passwordHash: object.passwordHash
   }
   
-  console.log("userCreds",userCreds)
+  // console.log("userCreds",userCreds)
   const credsDoc = await creds.create(userCreds)
   
   delete object.password
   delete object.passwordHash
   let userObject = {...object, _id: credsDoc._id}
 
-  console.log("userObject", userObject)
+  // console.log("userObject", userObject)
 
   return await user.create(userObject)
 }

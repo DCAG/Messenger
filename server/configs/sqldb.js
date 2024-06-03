@@ -143,4 +143,56 @@ const execQuery = async (query, ...argArray) => {
   return result;
 }
 
-module.exports = {getByQuery, runQuery, execQuery}
+/**
+ * @param {function} operation
+ */
+const dbShell = async (operation) => {
+  let db;
+  let result;
+
+  try{ 
+    db = await sqlite.open({
+      filename: SQLDB_PATH,
+      driver: sqlite3.Database,
+      mode: sqlite3.OPEN_READWRITE
+    })
+    // console.debug('Connected to the %s database.', SQLDB_PATH);
+    // console.debug("query: %s, args: %s", query, argArray)
+    result = await operation(db)
+
+    //console.debug(result);
+    await db.close();
+  }
+  catch(err){
+    console.error(err.message);
+    throw err
+  }
+
+  return result;
+}
+
+const dropAllTables = async (db) => {
+    // Begin a transaction
+    await db.exec('BEGIN TRANSACTION');
+
+    // Fetch all table names
+    const tables = await db.all("SELECT name FROM sqlite_master WHERE type='table' AND name<>'sqlite_sequence'");
+
+    // Drop each table
+    for (const table of tables) {
+      const dropTableSQL = `DROP TABLE IF EXISTS ${table.name}`;
+      await db.run(dropTableSQL);
+      console.log(`Table ${table.name} dropped.`);
+    }
+
+    // Commit the transaction
+    await db.exec('COMMIT');
+
+    console.log('All tables dropped successfully.');
+};
+
+const dropAllTablesExec = () => {
+  return dbShell(dropAllTables)
+}
+
+module.exports = {getByQuery, runQuery, execQuery, dropAllTablesExec}

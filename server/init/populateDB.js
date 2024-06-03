@@ -1,34 +1,111 @@
 const fs = require('fs')
+const fsPromises = require('fs').promises
 const csvParse = require('csv-parse')
 const bcrypt = require('bcrypt')
 
 const USERS_DATA = "./init/usersData.csv"
-const SALT_ROUNDS = process.env.SALT_ROUNDS || 10
+const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10) || 10
 
 const usersService = require('../services/usersService')
-const connectMongoDB = require('../configs/mongodb')
+const credsModel = require('../models/credsModel')
+const groupModel = require('../models/groupModel')
+const usersModel = require('../models/userModel')
+const { dropAllTablesExec } = require('../configs/sqldb')
+// const connectMongoDB = require('../configs/mongodb')
 
-connectMongoDB() // NOTE: will keep the process running!!!
+// connectMongoDB() // NOTE: will keep the process running!!!
 
-fs.readFile(USERS_DATA, 'utf-8', async function (err, fileData) {
+const dropAllCollections = () => {
+  return Promise.all([
+    credsModel.collection.drop(),
+    groupModel.collection.drop(),
+    usersModel.collection.drop(),
+  ])
+}
 
-  console.log("reading", fileData)
-  const parsedFile = csvParse.parse(fileData, { delimiter: '|', trim: true, columns: true })
-  //console.log(parsedFile)
+const parseCSV = (fileData) => {
+  return new Promise((resolve, reject) => {
+    csvParse.parse(fileData, { delimiter: '|', trim: true, columns: true }, (err, records) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(records);
+    });
+  });
+};
 
-  usersObjects = parsedFile.map(async (record) => {
-    delete record.id
-    delete record.passwordHash
-    delete record.createdDate
-    user = { ...record }
+const loadUsersData = async () => {
+  try {
+    const fileData = await fsPromises.readFile(USERS_DATA, 'utf8');
+    console.log("reading", fileData);
 
-    user.passwordHash = await bcrypt.hash(user.password, SALT_ROUNDS)
-    return user
-  })
+    const parsedFile = await parseCSV(fileData);
 
-  console.log(usersObjects.length)
-   
-  usersObjects.forEach(async (user) => {
-    usersService.create(user)
-  })
-})
+    const usersObjects = await Promise.all(parsedFile.map(async (record) => {
+      delete record.id;
+      delete record.passwordHash;
+      delete record.createdDate;
+      const user = { ...record };
+
+      const salt = await bcrypt.genSalt(SALT_ROUNDS);
+      user.passwordHash = await bcrypt.hash(user.password, salt);
+      return user;
+    }));
+
+    console.log(usersObjects.length);
+
+    for (const user of usersObjects) {
+      await usersService.create(user);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error loading user data:', error);
+    return false;
+  }
+};
+
+const createFlag = (flagName) => {
+  const path = `./${flagName}-loaded.flag.txt`
+
+  fs.open(path, 'w', (err, file) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(`Flag for [${flagName}] created successfully!`);
+    }
+  });
+}
+
+const flagExists = (flagName) => {
+  const path = `./${flagName}-loaded.flag.txt`
+
+  try {
+    if (fs.existsSync(path)) {
+      console.log(`Flag for [${flagName}] exists (${path})`);
+      return true
+    } else {
+      console.log(`Flag for [${flagName}] does not exists (${path})`);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return false
+}
+
+const loadExternalData = async () => {
+  if (!flagExists('users')) {
+    if (process.env.DROP_ALL_COLLECTIONS == 1) {
+      await dropAllCollections()
+    }
+    if (process.env.DROP_ALL_MESSAGES == 1) {
+      await dropAllTablesExec()
+    }
+    console.log('loading [users] data from csv file into mongodb')
+    if (await loadUsersData()) {
+      createFlag('users')
+    }
+  }
+}
+
+module.exports = loadExternalData
