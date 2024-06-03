@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require('cors')
 const authController = require('./controllers/auth')
 const selfController = require('./controllers/self')
+const pingController = require('./controllers/ping')
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const connectMongoDB = require('./configs/mongodb')
@@ -11,10 +12,12 @@ connectMongoDB()
 const app = express();
 const httpServer = createServer(app);
 
-app.use(cors())
+app.use(cors());
 app.use(express.json())
+
 app.use('/auth', authController);
 app.use('/self', httpJWT, selfController);
+app.use('/ping', pingController);
 
 const io = new Server(httpServer,{
   cors: {
@@ -56,9 +59,14 @@ const onConnection = (socket) => {
   socket.on("chat:private:new:message", messageNewPrivateChat);
   socket.on("contacts:blocked:update", updateBlockedContacts);
   
+  socket.on('disconnect', () => {
+    socket.broadcast.emit('contacts:offline',userId)
+  });
+
   const user = socket.request.user; 
   const userId = user?.user?.id
   socket.join(`user:${userId}`);
+  socket.broadcast.emit('contacts:online',{[userId]:userId})
 }
 
 io.on("connection", onConnection);

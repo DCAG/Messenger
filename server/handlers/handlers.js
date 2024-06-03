@@ -17,6 +17,17 @@ module.exports = (io) => {
     const contacts = await usersService.getAll()
     const contactsExceptThisUser = contacts.filter(c => c._id != socketUserId)
     socket.emit('contacts:received', contactsExceptThisUser)
+
+    // get online contacts
+    const roomsIter = io.sockets.adapter.rooms.keys()
+    let onlineContactsMap = {}
+    for(const key of roomsIter){
+      const matches = /user:(?<id>.+)/.exec(key)
+      if(matches?.groups.id){
+        onlineContactsMap[matches.groups.id] = matches.groups.id
+      }
+    }
+    socket.emit('contacts:online', onlineContactsMap)
   }
 
   const getMyChats = async function () {

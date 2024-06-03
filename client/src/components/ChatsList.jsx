@@ -7,7 +7,7 @@ import '../utils/types'
 
 
 function ChatsList() {
-  const { chats } = useSocket()
+  const { chats, onlineContacts } = useSocket()
   const [chatsFilter, setChatsFilter] = useState('')
   const [chatsList, setChatsList] = useState({})
 
@@ -38,11 +38,11 @@ function ChatsList() {
             return (
               <li key={chat._id} className='chat-item'>
                 <Link to={chat.type + '/' + chat._id}>
-                  <img src={CHAT_IMG[chat.type]} className='chat-item--icon' alt={`${chat.type} image`} />
+                  <img src={CHAT_IMG[chat.type]} className={`chat-item--icon${onlineContacts[chat.privateChatContactId]?' online':''}`} alt={`${chat.type} image`} />
                   <span>
                     {
                       /* NOTE: property 'privateChatName' was added in socketContext.jsx */
-                      chat.type === 'private' ? chat.privateChatName : (chat.type === 'group' ? chat.name : ':unknown:')
+                      chat.type === 'private' ? `${chat.privateChatName}${onlineContacts[chat.privateChatContactId]?' (online)':''}` : (chat.type === 'group' ? chat.name : ':unknown:')
                     }
                   </span>
                 </Link>
