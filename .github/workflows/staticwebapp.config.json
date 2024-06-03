@@ -2,7 +2,6 @@
   "platform": {
     "apiRuntime": "node:20"
   },
-{
   "routes": [
     {
       "route": "/*",
@@ -13,6 +12,4 @@
   "navigationFallback": {
     "rewrite": "/index.html"
   }
-}
-
 }
