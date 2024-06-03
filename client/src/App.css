@@ -69,6 +69,11 @@ body {
   width: 32px;
 }
 
+.chat-item--icon.online {
+  width: 32px;
+  filter: drop-shadow(0 0 0.75rem rgb(88, 254, 58));
+}
+
 /* .item1 { grid-area: header; } */
 .chat-list--area {
   grid-area: list;

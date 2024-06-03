@@ -11,6 +11,7 @@ const SocketProvider = ({ children }) => {
 
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [contacts, setContacts] = useState({})
+  const [onlineContacts, setOnlineContacts] = useState({})
   const [chats, setChats] = useState({})
   const [privateChatsMap, setPrivateChatsMap] = useState({})
   const [messageGroups, setMessageGroups] = useState({})
@@ -60,6 +61,17 @@ const SocketProvider = ({ children }) => {
           myContacts[user._id] = user
         }
         return myContacts
+      })
+    }
+
+    function onContactsOnline(onlineContactsMap){
+      setOnlineContacts(prev => ({...prev, ...onlineContactsMap}))
+    }
+    
+    function onContactsOffline(contactId){
+      setOnlineContacts(prev => {
+        delete prev[contactId]
+        return prev
       })
     }
 
@@ -184,16 +196,20 @@ const SocketProvider = ({ children }) => {
     socket.on('disconnect', onDisconnect);
     socket.on('profile:received', onProfileReceived)
     socket.on('contacts:received', onContactsReceived);
+    socket.on('contacts:online', onContactsOnline);
+    socket.on('contacts:offline', onContactsOffline);
     socket.on('chats:received', onChatsReceived);
     socket.on('message:received', onMessageReceived);
     socket.on('chats:removed', onChatsLeave);
     socket.on('chat:redirect', onChatRedirection);
-
+    
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('profile:received', onProfileReceived)
       socket.off('contacts:received', onContactsReceived);
+      socket.off('contacts:online', onContactsOnline);
+      socket.off('contacts:offline', onContactsOffline);
       socket.off('chats:received', onChatsReceived);
       socket.off('message:received', onMessageReceived);
       socket.off('chats:removed', onChatsLeave);
@@ -219,6 +235,7 @@ const SocketProvider = ({ children }) => {
       socket,
       isConnected,
       contacts,
+      onlineContacts,
       chats,
       privateChatsMap,
       messageGroups,
