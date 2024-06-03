@@ -28,8 +28,11 @@ jobs:
           npm run build --if-present
         # npm run test --if-present
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./server/* -r
+      - name: Create zip with all files, including dotfiles
+        run: |
+          shopt -s dotglob
+          zip -r release.zip ./server/*
+          shopt -u dotglob
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
