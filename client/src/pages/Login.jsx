@@ -4,7 +4,7 @@ import useAuth from '../utils/useAuth'
 import axios from 'axios'
 import useSocket from '../utils/useSocket'
 
-const LOGIN_URL = 'http://localhost:3000/auth/login'
+const LOGIN_URL = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth/login`
 
 function Login() {
   const navigate = useNavigate()
