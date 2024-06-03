@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useSocket from '../utils/useSocket'
 
 function NewChat() {
-  const { contacts, privateChatsMap } = useSocket()
+  const { contacts, privateChatsMap, onlineContacts } = useSocket()
   const [phoneBook, setPhoneBook] = useState([]) // ['a':[{id,username},...],...]
   const navigate = useNavigate()
 
@@ -54,7 +54,7 @@ function NewChat() {
                   {
                     phoneBook[letter].map(contact => {
                       return (
-                        <a key={contact._id} data-contactid={contact._id} onClick={handleAnchorLink}>{contact.username}</a>
+                        <a key={contact._id} data-contactid={contact._id} onClick={handleAnchorLink} className={`${onlineContacts[contact._id]?'online':''}`}>{contact.username}</a>
                       )
                     })
                   }

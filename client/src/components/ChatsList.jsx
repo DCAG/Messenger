@@ -20,6 +20,9 @@ function ChatsList() {
   }
 
   const chatFilter = function(id) {
+    if(chatsFilter === 'online'){
+      return onlineContacts[chats[id]?.privateChatContactId]
+    }
     return !chatsFilter || chats[id].type == chatsFilter
   }
 
