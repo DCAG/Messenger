@@ -1,5 +1,5 @@
-permissions.json
-users.json
+chat.db
+*.flag.txt
 
 # Logs
 actions.log.json
