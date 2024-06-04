@@ -1,74 +1,14 @@
 const sqlite3 = require('sqlite3')
 const sqlite = require('sqlite')
+const fs = require('fs');
 
 const SQLDB_PATH = process.env.SQLDB_PATH || 'chat.db'
-
-// const init = async () => {
-//   db = await sqlite.open({
-//     filename: SQLDB_PATH,
-//     driver: sqlite3.Database
-//   });
-
-// //   await db.exec(`
-// //   CREATE TABLE IF NOT EXISTS credentials (
-// //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-// //     username TEXT UNIQUE,
-// //     password TEXT,
-// //     password_hash TEXT
-// //   );
-// // `);
-
-// //   await db.exec(`
-// //   CREATE TABLE IF NOT EXISTS users (
-// //     id INTEGER PRIMARY KEY,
-// //     username TEXT UNIQUE,
-// //     createdDate DATE,
-// //     first_name TEXT,
-// //     last_name TEXT,
-// //     nickname TEXT,
-// //     status TEXT,
-// //     bio TEXT,
-// //     FOREIGN KEY (id) REFERENCES credentials(id)
-// //   );
-// // `);
-// // console.log('success -4')
-// //   /**
-// //    * direct chat is also a group - where 2 people are talking and they cannot set the name of the group ()
-// //    */
-// //   await db.exec(`
-// //   CREATE TABLE IF NOT EXISTS groups (
-// //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-// //     name TEXT NOT NULL,
-// //     description TEXT,
-// //     createdDate DATE
-// //   );
-// // `);
-// // console.log('success -3')
-// //   /**
-// //    * direct chat is also a group - where 2 people are talking and they cannot set the name of the group
-// //    */
-// //   await db.exec(`
-// //   CREATE TABLE IF NOT EXISTS group_members (
-// //     group_id INTEGER NOT NULL,
-// //     user_id INTEGER NOT NULL,
-// //     PRIMARY KEY (group_id, user_id),
-// //     FOREIGN KEY (group_id) REFERENCES groups(id),
-// //     FOREIGN KEY (user_id) REFERENCES users(id)
-// //   );
-// // `);
-
-// // console.log('success -2') 
-//   await 
-
-//   // console.log('success -1')
-//   return db;
-// }
 
 const getByQuery = async (query, options = {}, ...argArray) => {
   let db;
   let result;
- 
-  try{
+
+  try {
     db = await sqlite.open({
       filename: SQLDB_PATH,
       driver: sqlite3.Database,
@@ -76,16 +16,16 @@ const getByQuery = async (query, options = {}, ...argArray) => {
     })
     // console.debug('Connected to the %s database.', SQLDB_PATH);
     // console.debug("query (%s): %s, args: %s", (options?.single?'get':'all'), query, argArray)
-    if(options?.single){
+    if (options?.single) {
       result = await db.get(query, argArray)
     }
-    else{
+    else {
       result = await db.all(query, argArray)
     }
     //console.debug(result);
     await db.close();
   }
-  catch(err){
+  catch (err) {
     console.error(err.message);
     throw err
   }
@@ -97,7 +37,7 @@ const runQuery = async (query, ...argArray) => {
   let db;
   let result;
 
-  try{
+  try {
     db = await sqlite.open({
       filename: SQLDB_PATH,
       driver: sqlite3.Database,
@@ -110,7 +50,7 @@ const runQuery = async (query, ...argArray) => {
     //console.debug(result);
     await db.close();
   }
-  catch(err){
+  catch (err) {
     console.error(err.message);
     throw err
   }
@@ -122,7 +62,7 @@ const execQuery = async (query, ...argArray) => {
   let db;
   let result;
 
-  try{ 
+  try {
     db = await sqlite.open({
       filename: SQLDB_PATH,
       driver: sqlite3.Database,
@@ -135,7 +75,7 @@ const execQuery = async (query, ...argArray) => {
     //console.debug(result);
     await db.close();
   }
-  catch(err){
+  catch (err) {
     console.error(err.message);
     throw err
   }
@@ -150,7 +90,7 @@ const dbShell = async (operation) => {
   let db;
   let result;
 
-  try{ 
+  try {
     db = await sqlite.open({
       filename: SQLDB_PATH,
       driver: sqlite3.Database,
@@ -163,7 +103,7 @@ const dbShell = async (operation) => {
     //console.debug(result);
     await db.close();
   }
-  catch(err){
+  catch (err) {
     console.error(err.message);
     throw err
   }
@@ -172,27 +112,46 @@ const dbShell = async (operation) => {
 }
 
 const dropAllTables = async (db) => {
-    // Begin a transaction
-    await db.exec('BEGIN TRANSACTION');
+  // Begin a transaction
+  await db.exec('BEGIN TRANSACTION');
 
-    // Fetch all table names
-    const tables = await db.all("SELECT name FROM sqlite_master WHERE type='table' AND name<>'sqlite_sequence'");
+  // Fetch all table names
+  const tables = await db.all("SELECT name FROM sqlite_master WHERE type='table' AND name<>'sqlite_sequence'");
 
-    // Drop each table
-    for (const table of tables) {
-      const dropTableSQL = `DROP TABLE IF EXISTS ${table.name}`;
-      await db.run(dropTableSQL);
-      console.log(`Table ${table.name} dropped.`);
-    }
+  // Drop each table
+  for (const table of tables) {
+    const dropTableSQL = `DROP TABLE IF EXISTS ${table.name}`;
+    await db.run(dropTableSQL);
+    console.log(`Table ${table.name} dropped.`);
+  }
 
-    // Commit the transaction
-    await db.exec('COMMIT');
+  // Commit the transaction
+  await db.exec('COMMIT');
 
-    console.log('All tables dropped successfully.');
+  console.log('All tables dropped successfully.');
 };
 
-const dropAllTablesExec = () => {
+const dropAllTablesExec = async () => {
+  await createDBFileIfDoesNotExist()
   return dbShell(dropAllTables)
 }
 
-module.exports = {getByQuery, runQuery, execQuery, dropAllTablesExec}
+const createDBFileIfDoesNotExist = () => {
+  // Open the file for writing (and create it if it doesn't exist)
+  fs.open(SQLDB_PATH, 'w', (err, file) => {
+    if (err) {
+      console.error(`Error creating file ${SQLDB_PATH}:`, err);
+      return;
+    }
+    console.log(`Empty ${SQLDB_PATH} file created successfully.`);
+    fs.close(file, (err) => {
+      if (err) {
+        console.error('Error closing file:', err);
+        return;
+      }
+      console.log('File closed successfully.');
+    });
+  });
+}
+
+module.exports = { getByQuery, runQuery, execQuery, dropAllTablesExec }
