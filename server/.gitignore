@@ -1,4 +1,4 @@
-chat.db
+*.db
 *.flag.txt
 
 # Logs
