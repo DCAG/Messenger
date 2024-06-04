@@ -30,8 +30,9 @@ jobs:
 
       - name: Create zip with all files, including dotfiles
         run: |
+          cd server
           shopt -s dotglob
-          zip -r release.zip ./server/*
+          zip -r ../release.zip ./*
           shopt -u dotglob
 
       - name: Upload artifact for deployment job
