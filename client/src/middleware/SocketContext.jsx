@@ -19,6 +19,33 @@ const SocketProvider = ({ children }) => {
   const [blockedList, setBlockedList] = useState([])
   const [pendingRedirection, setPendingRedirection] = useState(null)
 
+  // Toast
+  const [pendingToast, setPendingToast] = useState({})
+  const [toast, setToast] = useState({ show: false, type: 'message', payload: {} });
+  const showToast = (type, payload) => {
+    setToast({ show: true, type, payload });
+    setTimeout(() => {
+      setToast({ show: false, type: 'message', payload: {} });
+    }, 3000);
+  };
+
+  useEffect(() => {
+    if (Object.keys(pendingToast).length > 0) {
+      if(pendingToast.type === 'message'){
+        const { senderId, content } = pendingToast.payload.messages[0]
+        if(contacts[senderId]){
+          const senderName = contacts[senderId]?.username ?? senderId
+          const chat = chats[pendingToast.payload.chatId] ?? pendingToast.payload.chatId
+          const where = (chat && chat.type === 'group') ? chat?.name : ''
+          showToast('message', { chatName: where, contactName: senderName, message: content })
+        }
+      }else if(pendingToast.type === 'connection'){
+        showToast(pendingToast.type, contacts[pendingToast.contactName]?.username)
+      }
+      setPendingToast({})
+    }
+  }, [pendingToast])
+
   useEffect(() => {
     //NOTE: inside this closure all the states above will remain with initial state (stale data)
     // to interact with them the either set new states and handle them in another useEffect or inside any setState
@@ -64,11 +91,15 @@ const SocketProvider = ({ children }) => {
       })
     }
 
-    function onContactsOnline(onlineContactsMap){
-      setOnlineContacts(prev => ({...prev, ...onlineContactsMap}))
+    function onContactsOnline(onlineContactsMap) {
+      if (Object.keys(onlineContactsMap).length === 1) {
+        setPendingToast({type: 'connection', contactName: Object.keys(onlineContactsMap)[0]})
+      }
+
+      setOnlineContacts(prev => ({ ...prev, ...onlineContactsMap }))
     }
-    
-    function onContactsOffline(contactId){
+
+    function onContactsOffline(contactId) {
       setOnlineContacts(prev => {
         delete prev[contactId]
         return prev
@@ -113,6 +144,10 @@ const SocketProvider = ({ children }) => {
      * @param {MessagesBulk} payload - {chatId: string, messages: [{message: {id: int, senderId, content, timestamp}}]}
      */
     function onMessageReceived(payload) {
+      if (payload?.messages.length === 1) {
+        setPendingToast({type: 'message', payload})
+      }
+
       setMessageGroups(prev => {
         const chatId = payload.chatId
         if (!prev[chatId]) {
@@ -202,7 +237,7 @@ const SocketProvider = ({ children }) => {
     socket.on('message:received', onMessageReceived);
     socket.on('chats:removed', onChatsLeave);
     socket.on('chat:redirect', onChatRedirection);
-    
+
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
@@ -240,7 +275,8 @@ const SocketProvider = ({ children }) => {
       privateChatsMap,
       messageGroups,
       profile,
-      blockedList
+      blockedList,
+      toast
     }}>
       {children}
     </SocketContext.Provider>

@@ -2,14 +2,17 @@ import React from 'react'
 import profileImage from '../assets/contact-small.png'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../utils/useAuth'
+import useSocket from '../utils/useSocket'
 
 function ProfileMenu() {
   const { logoutUser } = useAuth()
+  const { socket } = useSocket()
   const navigate = useNavigate()
 
   const logout = () => {
     logoutUser();
     navigate('/login')
+    socket.disconnect();
   }
 
   return (

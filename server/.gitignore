@@ -1,5 +1,5 @@
-permissions.json
-users.json
+*.db
+*.flag.txt
 
 # Logs
 actions.log.json
