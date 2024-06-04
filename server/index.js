@@ -1,3 +1,4 @@
+require('./env.config')
 const { httpJWT, socketJWT } = require('./middleware/jwtauth')
 const express = require("express");
 const cors = require('cors')
