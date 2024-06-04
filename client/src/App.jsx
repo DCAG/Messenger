@@ -1,5 +1,5 @@
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Base from './pages/Base'
 import Chat from './pages/Chat'
 import ChatServer from './pages/ChatServer'
@@ -13,7 +13,8 @@ function App() {
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path='/chats/' element={<Base />}>
+        <Route path="/" element={<Navigate to="/chats" />} />
+        <Route path='/chats' element={<Base />}>
           {/* general schema: :type/:id */}
           <Route path='group/new' element={<NewEditGroup />} />
           <Route path='group/:id' element={<Chat />} />
