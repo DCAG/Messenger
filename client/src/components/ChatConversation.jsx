@@ -38,13 +38,13 @@ function ChatConversation({chat}) {
       <ul className='messages-list'>
         {
           conversation && conversation.map(msg => {
-            const sender = chatMembers[msg.sender]
+            const sender = chatMembers[msg.senderId]
             return (
-              <li key={msg.id} className={userId === sender?._id ? 'message message-me' : 'message message-others'} style={getMessageStyle(msg.message)}>
+              <li key={msg.id} className={userId === sender?._id ? 'message message-me' : 'message message-others'} style={getMessageStyle(msg.content)}>
                 <span style={(chat.type!=='group' || userId === sender?._id) ? { display: 'none' } : {}} className='message-sender--title'>
                   {sender?.username}<br />
                 </span>
-                <span>{msg.message}</span>
+                <span>{msg.content}</span>
               </li>
             )
           })

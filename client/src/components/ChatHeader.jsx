@@ -15,11 +15,10 @@ function ChatHeader({ chat }) {
   }, [chat, blockedList])
 
   useEffect(() => {
-    if (chat?._id) {
-      setChatName(getChatName(chat))
-      // FUTURE: statusText will present if someone is typing...
-      setStatusText(getStatusText(chat))
-    }
+    // FUTURE: statusText will present if someone is typing...
+    setStatusText(writeStatusText)
+    // if chat?._id === '' - can be new private chat
+    setChatName(writeChatName)
   }, [chat, isBlocked])
 
   /**
@@ -27,8 +26,8 @@ function ChatHeader({ chat }) {
    * @param {Chat} chat 
    * @returns 
    */
-  const getChatName = (chat) => {
-    switch (chat.type) {
+  const writeChatName = (prev) => {
+    switch (chat?.type) {
       case 'private':
         return chat.privateChatName
       case 'group':
@@ -40,18 +39,17 @@ function ChatHeader({ chat }) {
     }
   }
 
-  /**
-   * 
-   * @param {Chat} chat 
-   * @returns 
-   */
-  const getStatusText = (chat) => {
-    if (chat.type === 'private' && isBlocked) {
+  const writeStatusText = (prev) => {
+    if (chat?.type === 'private' && isBlocked) {
       return '-- BLOCKED --'
     }
 
-    if (chat.type !== 'group') {
+    if (chat?.type !== 'group') {
       return ''
+    }
+
+    if(!chat?.members){
+      return prev
     }
 
     // in a group: present list of members

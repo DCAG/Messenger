@@ -22,7 +22,7 @@
 
 /**
  * @typedef {Object} Message
- * @property {String} _id
+ * @property {String} id
  * @property {String} senderId
  * @property {String} content
  * @property {Date} timestamp

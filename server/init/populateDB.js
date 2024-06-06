@@ -8,8 +8,8 @@ const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10) || 10
 
 const usersService = require('../services/usersService')
 const credsModel = require('../models/credsModel')
-const groupModel = require('../models/groupModel')
 const usersModel = require('../models/userModel')
+const chatModel = require('../models/chatModel')
 const { dropAllTablesExec } = require('../configs/sqldb')
 // const connectMongoDB = require('../configs/mongodb')
 
@@ -18,7 +18,7 @@ const { dropAllTablesExec } = require('../configs/sqldb')
 const dropAllCollections = () => {
   return Promise.all([
     credsModel.collection.drop(),
-    groupModel.collection.drop(),
+    chatModel.collection.drop(),
     usersModel.collection.drop(),
   ])
 }

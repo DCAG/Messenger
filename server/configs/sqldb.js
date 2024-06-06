@@ -4,12 +4,16 @@ const fs = require('fs');
 
 const SQLDB_PATH = process.env.SQLDB_PATH || 'chat.db'
 
+const SQLITE_MODES = {
+  OPEN_READWRITE: sqlite3.OPEN_READWRITE,
+  OPEN_READONLY: sqlite3.OPEN_READONLY
+}
 /**
  * @param {number} mode
  * @param {function} operation
  */
-const dbShell = async (mode = sqlite3.OPEN_READWRITE, operation) => {
-  let db;
+const dbShell = async (mode = SQLITE_MODES.OPEN_READWRITE, operation) => {
+  let db; 
   let result;
 
   try {
@@ -23,10 +27,10 @@ const dbShell = async (mode = sqlite3.OPEN_READWRITE, operation) => {
     result = await operation(db)
 
     //console.debug(result);
-    await db.close();
+    await db.close(); 
   }
   catch (err) {
-    console.error(err.message);
+    console.error(err.message); 
     throw err
   }
 
@@ -76,23 +80,4 @@ const dropAllTablesExec = async () => {
   return await dbShell(sqlite3.OPEN_READWRITE, dropAllTables)
 }
 
-const getByQuery = async (query, options = {}, ...argArray) => {
-  return dbShell(sqlite3.OPEN_READONLY, db => {
-    if (options?.single) {
-      return db.get(query, argArray)
-    }
-    else {
-      return db.all(query, argArray)
-    }
-  })
-}
-
-const runQuery = async (query, ...argArray) => {
-  return dbShell(sqlite3.OPEN_READWRITE, db => db.run(query, argArray))
-}
-
-const execQuery = (query, ...argArray) => {
-  return dbShell(sqlite3.OPEN_READWRITE, db => db.exec(query, argArray))
-}
-
-module.exports = { getByQuery, runQuery, execQuery, dropAllTablesExec }
+module.exports = { dropAllTablesExec, dbShell, SQLITE_MODES }

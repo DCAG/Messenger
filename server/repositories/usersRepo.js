@@ -2,11 +2,11 @@ const user = require('../models/userModel')
 const creds = require('../models/credsModel')
 
 const getById = (id) => {
-  return user.findById(id).populate('groups').exec()
+  return user.findById(id).populate('chats').exec()
 }
 
 const getByUsername = (username) => {
-  return user.findOne({username: username}).populate('groups').exec()
+  return user.findOne({username: username}).populate('chats').exec()
 }
 
 const getCredentials = (username) => {
