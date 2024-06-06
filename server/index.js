@@ -68,7 +68,8 @@ mongoose.connection.once('open', async () => {
     socket.on("contacts:blocked:update", updateBlockedContacts);
 
     socket.on('disconnect', () => {
-      socket.broadcast.emit('contacts:offline', userId)
+      console.log('broadcasting user logged off', userId, )
+      io.emit('contacts:offline', userId)
     });
 
     const user = socket.request.user;

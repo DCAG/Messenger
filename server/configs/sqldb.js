@@ -4,111 +4,55 @@ const fs = require('fs');
 
 const SQLDB_PATH = process.env.SQLDB_PATH || 'chat.db'
 
-const getByQuery = async (query, options = {}, ...argArray) => {
-  let db;
-  let result;
-
-  try {
-    db = await sqlite.open({
-      filename: SQLDB_PATH,
-      driver: sqlite3.Database,
-      mode: sqlite3.OPEN_READONLY
-    })
-    // console.debug('Connected to the %s database.', SQLDB_PATH);
-    // console.debug("query (%s): %s, args: %s", (options?.single?'get':'all'), query, argArray)
-    if (options?.single) {
-      result = await db.get(query, argArray)
-    }
-    else {
-      result = await db.all(query, argArray)
-    }
-    //console.debug(result);
-    await db.close();
-  }
-  catch (err) {
-    console.error(err.message);
-    throw err
-  }
-
-  return result;
+const SQLITE_MODES = {
+  OPEN_READWRITE: sqlite3.OPEN_READWRITE,
+  OPEN_READONLY: sqlite3.OPEN_READONLY
 }
-
-const runQuery = async (query, ...argArray) => {
-  let db;
-  let result;
-
-  try {
-    db = await sqlite.open({
-      filename: SQLDB_PATH,
-      driver: sqlite3.Database,
-      mode: sqlite3.OPEN_READWRITE
-    })
-    // console.debug('Connected to the %s database.', SQLDB_PATH);
-    // console.debug("query: %s, args: %s", query, argArray)
-    result = await db.run(query, argArray)
-
-    //console.debug(result);
-    await db.close();
-  }
-  catch (err) {
-    console.error(err.message);
-    throw err
-  }
-
-  return result;
-}
-
-const execQuery = async (query, ...argArray) => {
-  let db;
-  let result;
-
-  try {
-    db = await sqlite.open({
-      filename: SQLDB_PATH,
-      driver: sqlite3.Database,
-      mode: sqlite3.OPEN_READWRITE
-    })
-    // console.debug('Connected to the %s database.', SQLDB_PATH);
-    // console.debug("query: %s, args: %s", query, argArray)
-    result = await db.exec(query, argArray)
-
-    //console.debug(result);
-    await db.close();
-  }
-  catch (err) {
-    console.error(err.message);
-    throw err
-  }
-
-  return result;
-}
-
 /**
+ * @param {number} mode
  * @param {function} operation
  */
-const dbShell = async (operation) => {
-  let db;
+const dbShell = async (mode = SQLITE_MODES.OPEN_READWRITE, operation) => {
+  let db; 
   let result;
 
   try {
     db = await sqlite.open({
       filename: SQLDB_PATH,
       driver: sqlite3.Database,
-      mode: sqlite3.OPEN_READWRITE
+      mode: mode
     })
     // console.debug('Connected to the %s database.', SQLDB_PATH);
     // console.debug("query: %s, args: %s", query, argArray)
     result = await operation(db)
 
     //console.debug(result);
-    await db.close();
+    await db.close(); 
   }
   catch (err) {
-    console.error(err.message);
+    console.error(err.message); 
     throw err
   }
 
   return result;
+}
+
+const createDBFileIfDoesNotExist = () => {
+  // Open the file for writing (and create it if it doesn't exist)
+  fs.open(SQLDB_PATH, 'w', (err, file) => {
+    if (err) {
+      console.error(`Error creating file ${SQLDB_PATH}:`, err);
+      return;
+    }
+    console.log(`Empty ${SQLDB_PATH} file created successfully.`);
+    fs.close(file, (err) => {
+      if (err) {
+        console.error('Error closing file:', err);
+        return;
+      }
+      console.log('File closed successfully.');
+    });
+  });
 }
 
 const dropAllTables = async (db) => {
@@ -133,25 +77,7 @@ const dropAllTables = async (db) => {
 
 const dropAllTablesExec = async () => {
   await createDBFileIfDoesNotExist()
-  return dbShell(dropAllTables)
+  return await dbShell(sqlite3.OPEN_READWRITE, dropAllTables)
 }
 
-const createDBFileIfDoesNotExist = () => {
-  // Open the file for writing (and create it if it doesn't exist)
-  fs.open(SQLDB_PATH, 'w', (err, file) => {
-    if (err) {
-      console.error(`Error creating file ${SQLDB_PATH}:`, err);
-      return;
-    }
-    console.log(`Empty ${SQLDB_PATH} file created successfully.`);
-    fs.close(file, (err) => {
-      if (err) {
-        console.error('Error closing file:', err);
-        return;
-      }
-      console.log('File closed successfully.');
-    });
-  });
-}
-
-module.exports = { getByQuery, runQuery, execQuery, dropAllTablesExec }
+module.exports = { dropAllTablesExec, dbShell, SQLITE_MODES }

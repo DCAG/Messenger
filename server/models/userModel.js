@@ -20,11 +20,10 @@ const userSchema = new mongoose.Schema(
     }
 )
 
-userSchema.virtual('groups', {
-    ref: 'group',
+userSchema.virtual('chats', {
+    ref: 'chat',
     localField: '_id',
     foreignField: 'members', // field in other model pointing to this model
-    //justOne : true
   });
 
 const User = mongoose.model('user', userSchema, 'users')

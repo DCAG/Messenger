@@ -40,7 +40,7 @@ function Chat() {
         // private chat does not exist yet
         const contact = contacts[contactId]
         return {
-          id: '',
+          _id: '',
           name: '',
           type: 'private',
           members: [

@@ -102,7 +102,7 @@ const SocketProvider = ({ children }) => {
     function onContactsOffline(contactId) {
       setOnlineContacts(prev => {
         delete prev[contactId]
-        return prev
+        return {...prev}
       })
     }
 
@@ -115,12 +115,6 @@ const SocketProvider = ({ children }) => {
       setChats(prev => {
         let updatedChats = { ...prev }
         myChats.forEach(chat => {
-          updatedChats[chat._id] = chat
-
-          //NOTE: It is not guarenteed that the messages map will be updated with the new group by the time the messages will arrive
-          // To eliminate race conditions - it will be populated on message received only (if it does not exist).
-
-          socket.emit("messages:get", chat._id)
           // TODO: should blocked chats be displayed?
           if (chat.type === 'private') {
             // NOTE: in a private chat there are only 2 members - this user and another.
@@ -129,11 +123,24 @@ const SocketProvider = ({ children }) => {
               console.debug(`private chat ${chat._id} is missing other member`)
             }
             else {
-              // NOTE: IMPORTANT! added 'privateChatName' and 'privateChatContactId' in chats property - state!
-              updatedChats[chat._id] = { ...chat, privateChatName: contact.username, privateChatContactId: contact._id }
+              // NOTE: IMPORTANT! added properties 'privateChatName' and 'privateChatContactId' to chat object
+              updatedChats[chat._id] = {
+                ...chat,
+                privateChatName: contact.username,
+                privateChatContactId: contact._id
+              }
               setPrivateChatsMap(prevMap => ({ ...prevMap, [contact._id]: chat._id }))
             }
           }
+          else{
+            // chat.type === 'group'
+            // FUTURE: chat.type === 'self' ?
+            updatedChats[chat._id] = chat
+          }
+          
+          //NOTE: It is not guarenteed that the messages map will be updated with the new group by the time the messages will arrive
+          // To eliminate race conditions - it will be updated (and created) on message received only (if it does not exist).
+          socket.emit("messages:get", chat._id)
         })
         return updatedChats
       })
@@ -141,7 +148,7 @@ const SocketProvider = ({ children }) => {
 
     /**
      * bulk of messages of 1 chat specified by chatId
-     * @param {MessagesBulk} payload - {chatId: string, messages: [{message: {id: int, senderId, content, timestamp}}]}
+     * @param {{chatId: String, messages:Array<Message>}} payload
      */
     function onMessageReceived(payload) {
       if (payload?.messages.length === 1) {
@@ -153,12 +160,7 @@ const SocketProvider = ({ children }) => {
         if (!prev[chatId]) {
           return {
             ...prev,
-            [chatId]: payload.messages.map(message => ({
-              id: message.id,
-              // senderId is replaced with human readable name inside the conversation area in the chat page when the message is displayed
-              sender: message.senderId,
-              message: message.content
-            }))
+            [chatId]: payload.messages
           }
         }
 
@@ -185,11 +187,7 @@ const SocketProvider = ({ children }) => {
           ...prev,
           [chatId]: [
             ...prev[chatId],
-            ...messages.map(message => ({
-              id: message.id,
-              sender: message.senderId, // TODO: replace with username
-              message: message.content
-            }))
+            ...messages
           ]
         }
       })
@@ -203,12 +201,12 @@ const SocketProvider = ({ children }) => {
           // remove keys from privateChatMap
           setPrivateChatsMap(previousPrivates => {
             delete previousPrivates[previousChats[chatId]?.privateChatContactId]
-            return previousPrivates
+            return {...previousPrivates}
           })
           // remove chat key
           delete previousChats[chatId]
         })
-        return previousChats
+        return {...previousChats}
       })
 
       // if one of the removed chats is open - navigate away

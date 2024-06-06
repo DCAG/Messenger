@@ -18,14 +18,14 @@ body {
   background-color: rgba(255, 255, 255, 0.8);
   text-align: center;
   /* padding: 20px 0; */
-  height: 100vh;
+  height: 100dvh;
 }
 
 .chat-list {
   list-style: none;
   padding: 2px;
   overflow: auto;
-  height: calc(100vh - 200px);
+  height: calc(100dvh - 200px);
 }
 
 .chat-item {

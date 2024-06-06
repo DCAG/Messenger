@@ -1,53 +1,27 @@
 const chatRepo = require('../repositories/chatRepo')
 
-/**
- * 
- * @param {String} groupId 
- * @param {String} senderId 
- * @param {String} content 
- * @returns 
- */
-const writeMessage = (groupId, senderId, content) => {
-  return chatRepo.writeMessage(groupId, senderId, content)
+const create = async (object) => {
+  const chat = await chatRepo.create(object)
+  return chat
 }
 
-/**
- * 
- * @param {String} groupId 
- * @returns 
- */
-const getAllMessages = async (groupId) => {
-  try {
-    return await chatRepo.getAllMessages(groupId)
-  }
-  catch (e) {
-    if (/no such table/.test(e.message)) {
-      return undefined
-    }
-    else {
-      throw e
-    }
-  }
+const update = async (id, object) => {
+  const chat = await chatRepo.update(id, object)
+  return chat
 }
 
-/**
- * 
- * @param {String} groupId 
- * @param {Number} offset 
- * @returns 
- */
-const getAllRemainingMessages = (groupId, offset) => {
-  try {
-    return chatRepo.getAllRemainingMessages(groupId, offset)
-  }
-  catch (e) {
-    if (/no such table/.test(e.message)) {
-      return undefined
-    }
-    else {
-      throw e
-    }
-  }
+const joinMember = async (chatId, userId) => {
+  const chat = await chatRepo.getById(chatId)
+  chat.members.push(userId)
+  return await chatRepo.update(chatId, chat)
 }
 
-module.exports = { getAllRemainingMessages, writeMessage, getAllMessages }
+const getById = (id) => {
+  return chatRepo.getById(id)
+}
+
+const getByUserId = (userId) => {
+  return chatRepo.getByUserId(userId)
+}
+
+module.exports = {getByUserId, create, update, getById, joinMember}
