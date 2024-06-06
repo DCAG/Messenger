@@ -17,7 +17,6 @@ function ChatHeader({ chat }) {
   useEffect(() => {
     // FUTURE: statusText will present if someone is typing...
     setStatusText(writeStatusText)
-    // if chat?._id === '' - can be new private chat
     setChatName(writeChatName)
   }, [chat, isBlocked])
 
@@ -77,7 +76,6 @@ function ChatHeader({ chat }) {
   }
 
   const leaveGroup = () => {
-    // TODO: draw the entire flow
     socket.emit("chat:leave", chat?._id)
   }
 
@@ -97,8 +95,7 @@ function ChatHeader({ chat }) {
   return (
     <div className='chat-window--header'>
       <div className='chat-window--header-info'>
-        {/* TODO: replace style with className */}
-        <img src={CHAT_IMG[chat?.type]} style={{ width: '32px' }} alt={`${chat?.type} image`} />
+        <img src={CHAT_IMG[chat?.type]} alt={`${chat?.type} image`} />
         <span>
           {chatName}
         </span>

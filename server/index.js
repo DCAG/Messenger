@@ -48,7 +48,6 @@ mongoose.connection.once('open', async () => {
     getMessages,
     createGroupChat,
     editGroupChat,
-    // joinUserToGroup,
     leaveChat,
     messageChat,
     messageNewPrivateChat,
@@ -67,8 +66,11 @@ mongoose.connection.once('open', async () => {
     socket.on("chat:private:new:message", messageNewPrivateChat);
     socket.on("contacts:blocked:update", updateBlockedContacts);
 
-    socket.on('disconnect', () => {
-      console.log('broadcasting user logged off', userId, )
+    socket.on('disconnect', function() {
+      const socket = this;
+      const user = socket.request.user;
+      const userId = user?.user?.id
+      console.log('user disconnected', userId)
       io.emit('contacts:offline', userId)
     });
 

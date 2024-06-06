@@ -24,7 +24,7 @@ function NewEditGroup() {
       const groupObj = {
         ...chat,
         description: chat.name,
-        // NOTE: Add this user to the group
+        // NOTE: Add current user to the group
         members: chat.members.map(i => i._id).concat([sessionStorage['id']])
       }
       if (!id) {
