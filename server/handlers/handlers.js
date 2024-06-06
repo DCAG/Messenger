@@ -36,25 +36,11 @@ module.exports = (io) => {
     const socketUserId = socketUser?.user?._id
     // get all chats
     const chats = await chatService.getByUserId(socketUserId) ?? []
-    // socket.emit('chats:received', groups)
 
     // join all groups chats and unblocked private chats
     const user = await usersService.getByUsername(socketUser.user.username)
     const blockedList = user.blockedList
-    // groups
-    //   .filter(group => group.type !== 'private')
-    //   .forEach(group => {
-    //     socket.join(`chat:${group._id}`)
-    //     console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
-    //   })
-    // groups
-    //   .filter(group => group.type === 'private' &&
-    //     !group.members.some(member => blockedList.includes(member._id)))
-    //   .forEach(group => {
-    //     socket.join(`chat:${group._id}`)
-    //     console.debug(`join user ${socketUser.user.username} to chat ${group._id} (${group.name})`)
-    //   })
-    // shorter version (might be less readable)
+
     const unblockedChats = chats.filter(chat => {
       // if on private chat the other member is not in blocked list then join to the chat
       return chat.type !== 'private' ||
