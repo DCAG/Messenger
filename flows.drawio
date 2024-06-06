@@ -140,6 +140,56 @@
             </root>
         </mxGraphModel>
     </diagram>
+    <diagram name="newGroupChat" id="b9a4iBgPsBuXqIKOAgBv">
+        <mxGraphModel dx="794" dy="1519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="LPyrxAhnVZNptDFKffri-0"/>
+                <mxCell id="LPyrxAhnVZNptDFKffri-1" parent="LPyrxAhnVZNptDFKffri-0"/>
+                <mxCell id="LPyrxAhnVZNptDFKffri-2" value="Pool" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=20;html=1;" vertex="1" parent="LPyrxAhnVZNptDFKffri-1">
+                    <mxGeometry x="20" y="-1080" width="400" height="710" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-3" value="client" style="swimlane;startSize=20;html=1;" vertex="1" parent="LPyrxAhnVZNptDFKffri-2">
+                    <mxGeometry y="20" width="200" height="690" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-4" value="" style="edgeStyle=none;html=1;" edge="1" parent="LPyrxAhnVZNptDFKffri-3" source="LPyrxAhnVZNptDFKffri-5" target="LPyrxAhnVZNptDFKffri-6">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-5" value="user create a new group chat via form" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_2;whiteSpace=wrap;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
+                    <mxGeometry x="20" y="30" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-6" value="&lt;div style=&quot;background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;background-color: rgb(31, 31, 31); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(204, 204, 204); line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;chat:group:create&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;{ &lt;/font&gt;&lt;font color=&quot;#9cdcfe&quot;&gt;name, type,&lt;/font&gt;&lt;font color=&quot;#cccccc&quot;&gt;&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;members&lt;/span&gt;&lt;font color=&quot;#cccccc&quot;&gt; }&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
+                    <mxGeometry y="150" width="200" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="4FKS_Yn0GJPSoefYKt0N-0" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-3" source="LPyrxAhnVZNptDFKffri-7" target="LPyrxAhnVZNptDFKffri-10">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-7" value="&lt;span style=&quot;background-color: initial;&quot;&gt;populate chats&lt;/span&gt;&lt;br&gt;&lt;div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;messages:get&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;align=left;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
+                    <mxGeometry x="30" y="360" width="140" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-10" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- DONE -&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;populated:&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;div style=&quot;color: rgb(204, 204, 204); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #4fc1ff;&quot;&gt;chats&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;sketch=0;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
+                    <mxGeometry x="15" y="550" width="170" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-11" value="server" style="swimlane;startSize=20;html=1;" vertex="1" parent="LPyrxAhnVZNptDFKffri-2">
+                    <mxGeometry x="200" y="20" width="200" height="690" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-12" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;lt;there are no messages yet&amp;gt;&lt;/span&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;align=center;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-11">
+                    <mxGeometry x="25" y="460" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-13" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;1. create chat&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;2. join all members to chat room (from all of their sessions)&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(158, 206, 106);&quot;&gt;chats:received&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47);&quot;&gt;&amp;lt;chat[1]&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47);&quot;&gt;4. redirect user to the new chat that was created&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(158, 206, 106);&quot;&gt;chat:redirect&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47);&quot;&gt;&amp;lt;chat._id&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-11">
+                    <mxGeometry x="40" y="120" width="160" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-14" value="" style="edgeStyle=none;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-7" target="LPyrxAhnVZNptDFKffri-12">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-16" value="" style="edgeStyle=none;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-13" target="LPyrxAhnVZNptDFKffri-7">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="LPyrxAhnVZNptDFKffri-17" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-6" target="LPyrxAhnVZNptDFKffri-13">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
     <diagram name="newMessage (existing chat)" id="vTaOh_OU4cQw1B3N2LTC">
         <mxGraphModel dx="794" dy="1519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
@@ -203,7 +253,7 @@
             </root>
         </mxGraphModel>
     </diagram>
-    <diagram name="group chat leave" id="xVYx8T3QkgDtA0wrUnIf">
+    <diagram name="leaveGroupChat" id="xVYx8T3QkgDtA0wrUnIf">
         <mxGraphModel dx="794" dy="1519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="JrgIu-DkOk2aNiVJUk6y-0"/>
@@ -234,7 +284,7 @@
                 <mxCell id="HfP6-W1xDIrDuGZBnH6g-3" value="" style="edgeStyle=none;html=1;dashed=1;dashPattern=1 2;" edge="1" parent="JrgIu-DkOk2aNiVJUk6y-11" source="JrgIu-DkOk2aNiVJUk6y-13" target="HfP6-W1xDIrDuGZBnH6g-2">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="JrgIu-DkOk2aNiVJUk6y-13" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;1. update chat members&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;2. call editGroupChat()&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="JrgIu-DkOk2aNiVJUk6y-11">
+                <mxCell id="JrgIu-DkOk2aNiVJUk6y-13" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;1. update chat members (remove this user)&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;2. call editGroupChat()&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="JrgIu-DkOk2aNiVJUk6y-11">
                     <mxGeometry x="25" y="230" width="160" height="70" as="geometry"/>
                 </mxCell>
                 <mxCell id="HfP6-W1xDIrDuGZBnH6g-2" value="see editGroupChat flow" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="JrgIu-DkOk2aNiVJUk6y-11">
@@ -249,57 +299,67 @@
             </root>
         </mxGraphModel>
     </diagram>
-    <diagram name="TODO:create new group chat" id="b9a4iBgPsBuXqIKOAgBv">
-        <mxGraphModel dx="1644" dy="1519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <diagram name="editGroupChat" id="blD5LkCuKN3fErBvbDzX">
+        <mxGraphModel dx="794" dy="1519" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
-                <mxCell id="LPyrxAhnVZNptDFKffri-0"/>
-                <mxCell id="LPyrxAhnVZNptDFKffri-1" parent="LPyrxAhnVZNptDFKffri-0"/>
-                <mxCell id="LPyrxAhnVZNptDFKffri-2" value="Pool" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=20;html=1;" vertex="1" parent="LPyrxAhnVZNptDFKffri-1">
-                    <mxGeometry x="20" y="-1080" width="400" height="710" as="geometry"/>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-0"/>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-1" parent="A14rhuOSeq66PP6WQR4l-0"/>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-2" value="Pool" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=20;html=1;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-1">
+                    <mxGeometry x="20" y="-1080" width="400" height="1070" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-3" value="client" style="swimlane;startSize=20;html=1;" vertex="1" parent="LPyrxAhnVZNptDFKffri-2">
-                    <mxGeometry y="20" width="200" height="690" as="geometry"/>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-3" value="client" style="swimlane;startSize=20;html=1;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-2">
+                    <mxGeometry y="20" width="200" height="1050" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-4" value="" style="edgeStyle=none;html=1;" edge="1" parent="LPyrxAhnVZNptDFKffri-3" source="LPyrxAhnVZNptDFKffri-5" target="LPyrxAhnVZNptDFKffri-6">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-4" value="" style="edgeStyle=none;html=1;" edge="1" parent="A14rhuOSeq66PP6WQR4l-3" target="A14rhuOSeq66PP6WQR4l-6">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="98.17073170731715" y="100" as="sourcePoint"/>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-5" value="user sends message to a NEW private chat&lt;br&gt;*the chat does not exist yet" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_2;whiteSpace=wrap;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
+                <mxCell id="A14rhuOSeq66PP6WQR4l-5" value="user updates group chat in NewEditGroup page" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_2;whiteSpace=wrap;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-3">
                     <mxGeometry x="20" y="30" width="160" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-6" value="&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(204, 204, 204); background-color: rgb(31, 31, 31); line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;chat:private:new:message&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;{ &lt;span style=&quot;color: #9cdcfe;&quot;&gt;contactId&lt;/span&gt;, &lt;span style=&quot;color: #9cdcfe;&quot;&gt;content&lt;/span&gt; }&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
-                    <mxGeometry y="130" width="140" height="75" as="geometry"/>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-6" value="&lt;div style=&quot;background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;background-color: rgb(31, 31, 31); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(204, 204, 204); line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;chat:group:edit&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;{&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;_id,&amp;nbsp;&lt;/span&gt;&lt;font color=&quot;#9cdcfe&quot;&gt;name, type,&lt;/font&gt;&lt;font color=&quot;#cccccc&quot;&gt;&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;members&lt;/span&gt;&lt;font color=&quot;#cccccc&quot;&gt;&amp;nbsp;}&lt;/font&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-3">
+                    <mxGeometry x="30" y="130" width="140" height="75" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-7" value="populate:&lt;br&gt;1. private chats&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;2. chats&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;messages:get&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;align=left;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
-                    <mxGeometry x="10" y="320" width="140" height="80" as="geometry"/>
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-8" value="update (remove keys):&lt;br&gt;1.&amp;nbsp;&lt;span style=&quot;color: rgb(79, 193, 255); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;chats&lt;/span&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(79, 193, 255); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;privateChatsMap&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;if inside a chat that was removed - navigate to /chats&lt;span style=&quot;color: rgb(79, 193, 255); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;align=left;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-3">
+                    <mxGeometry x="20" y="780" width="140" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-8" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-3" source="LPyrxAhnVZNptDFKffri-9" target="LPyrxAhnVZNptDFKffri-10">
+                <mxCell id="A14rhuOSeq66PP6WQR4l-7" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- DONE -&lt;/span&gt;&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;sketch=0;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-3">
+                    <mxGeometry x="15" y="910" width="170" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-8" value="server" style="swimlane;startSize=20;html=1;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-2">
+                    <mxGeometry x="200" y="20" width="200" height="1050" as="geometry"/>
+                </mxCell>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-10" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;1. extract removed members (if any)&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;2. update chat in the DB&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;3. join all updated members to chat room&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;4. send a notification of the updated chat to updated members&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #9ece6a;&quot;&gt;chats:received&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;5. remove from the room all removed members from chat group&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;6. send a notification to all removed members to remove group from their lists&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #9ece6a;&quot;&gt;chats:removed&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-8">
+                    <mxGeometry x="20" y="180" width="160" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="A14rhuOSeq66PP6WQR4l-12" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="A14rhuOSeq66PP6WQR4l-2" source="A14rhuOSeq66PP6WQR4l-6" target="A14rhuOSeq66PP6WQR4l-10">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-9" value="populate:&lt;br&gt;1.&amp;nbsp;&lt;span style=&quot;color: rgb(220, 220, 170); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;MessageGroups&lt;/span&gt;" style="whiteSpace=wrap;html=1;align=left;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
-                    <mxGeometry y="465" width="140" height="45" as="geometry"/>
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-7" value="" style="edgeStyle=none;html=1;entryX=0.557;entryY=0.029;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="A14rhuOSeq66PP6WQR4l-2" source="A14rhuOSeq66PP6WQR4l-10" target="q1tpmx-mhjulP2Pv25v3-8">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="120" y="790" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="180" y="730"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-10" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- DONE -&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;populated:&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;div style=&quot;color: rgb(204, 204, 204); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #4fc1ff;&quot;&gt;chats&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #4fc1ff;&quot;&gt;privateChatsMap&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(79, 193, 255);&quot;&gt;messageGroups&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;sketch=0;" vertex="1" parent="LPyrxAhnVZNptDFKffri-3">
-                    <mxGeometry x="10" y="550" width="170" height="120" as="geometry"/>
-                </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-11" value="server" style="swimlane;startSize=20;html=1;" vertex="1" parent="LPyrxAhnVZNptDFKffri-2">
-                    <mxGeometry x="200" y="20" width="200" height="690" as="geometry"/>
-                </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-12" value="&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #9ece6a;&quot;&gt;message:received&lt;/span&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;align=center;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-11">
-                    <mxGeometry x="40" y="410" width="160" height="45" as="geometry"/>
-                </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-13" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;1. create chat&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;2. register message&lt;/div&gt;&lt;div style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47); line-height: 19px;&quot;&gt;3. join both contacts to chat (unless one of them blocked the other)&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(158, 206, 106);&quot;&gt;chats:received&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47);&quot;&gt;&amp;lt;chat[1]&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47);&quot;&gt;4. redirect user to regular chat page (instead of new chat page)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(158, 206, 106);&quot;&gt;chat:redirect&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px; background-color: rgb(42, 37, 47);&quot;&gt;&amp;lt;chat._id&amp;gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="LPyrxAhnVZNptDFKffri-11">
-                    <mxGeometry x="40" y="120" width="160" height="240" as="geometry"/>
-                </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-14" value="" style="edgeStyle=none;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-7" target="LPyrxAhnVZNptDFKffri-12">
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-4" style="edgeStyle=none;html=1;" edge="1" parent="A14rhuOSeq66PP6WQR4l-1" source="q1tpmx-mhjulP2Pv25v3-0" target="q1tpmx-mhjulP2Pv25v3-2">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-15" style="edgeStyle=none;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-12" target="LPyrxAhnVZNptDFKffri-9">
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-0" value="populate:&lt;br&gt;1.&amp;nbsp;&lt;span style=&quot;color: rgb(79, 193, 255); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;chats&lt;/span&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;2.&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(79, 193, 255); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;privateChatsMap&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;div style=&quot;color: rgb(204, 204, 204); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;messages:get&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;align=left;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-1">
+                    <mxGeometry x="20" y="-520" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-1" value="populate:&lt;br&gt;1.&amp;nbsp;&lt;span style=&quot;color: rgb(79, 193, 255); background-color: rgb(31, 31, 31); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px;&quot;&gt;messageGroups&lt;/span&gt;" style="whiteSpace=wrap;html=1;align=left;strokeWidth=2;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-1">
+                    <mxGeometry x="20" y="-370" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-5" style="edgeStyle=none;html=1;" edge="1" parent="A14rhuOSeq66PP6WQR4l-1" source="q1tpmx-mhjulP2Pv25v3-2" target="q1tpmx-mhjulP2Pv25v3-1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-16" value="" style="edgeStyle=none;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-13" target="LPyrxAhnVZNptDFKffri-7">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-2" value="&lt;div style=&quot;color: rgb(169, 177, 214); background-color: rgb(26, 27, 38); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #9ece6a;&quot;&gt;message:received&lt;/span&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;align=center;strokeWidth=2;" vertex="1" parent="A14rhuOSeq66PP6WQR4l-1">
+                    <mxGeometry x="250" y="-435" width="160" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="LPyrxAhnVZNptDFKffri-17" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="LPyrxAhnVZNptDFKffri-2" source="LPyrxAhnVZNptDFKffri-6" target="LPyrxAhnVZNptDFKffri-13">
+                <mxCell id="q1tpmx-mhjulP2Pv25v3-3" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="A14rhuOSeq66PP6WQR4l-1" source="A14rhuOSeq66PP6WQR4l-10" target="q1tpmx-mhjulP2Pv25v3-0">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
             </root>

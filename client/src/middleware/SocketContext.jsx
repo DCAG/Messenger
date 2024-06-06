@@ -31,15 +31,15 @@ const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (Object.keys(pendingToast).length > 0) {
-      if(pendingToast.type === 'message'){
+      if (pendingToast.type === 'message') {
         const { senderId, content } = pendingToast.payload.messages[0]
-        if(contacts[senderId]){
+        if (contacts[senderId]) {
           const senderName = contacts[senderId]?.username ?? senderId
           const chat = chats[pendingToast.payload.chatId] ?? pendingToast.payload.chatId
           const where = (chat && chat.type === 'group') ? chat?.name : ''
           showToast('message', { chatName: where, contactName: senderName, message: content })
         }
-      }else if(pendingToast.type === 'connection'){
+      } else if (pendingToast.type === 'connection') {
         showToast(pendingToast.type, contacts[pendingToast.contactName]?.username)
       }
       setPendingToast({})
@@ -50,6 +50,17 @@ const SocketProvider = ({ children }) => {
     //NOTE: inside this closure all the states above will remain with initial state (stale data)
     // to interact with them the either set new states and handle them in another useEffect or inside any setState
 
+    // NOTE: when using the same browser window to login to another user need to reset the app (either by a refresh or by resetting all states)
+    setIsConnected(socket.connected)
+    setContacts({})
+    setOnlineContacts({})
+    setChats({})
+    setPrivateChatsMap({})
+    setMessageGroups({})
+    setProfile({})
+    setBlockedList([])
+    setPendingRedirection(null)
+
     const token = sessionStorage['accessToken'];
     if (!isConnected && token) {
       socket.auth = { token }
@@ -58,7 +69,8 @@ const SocketProvider = ({ children }) => {
 
     function onConnect() {
       setIsConnected(true);
-      socket.emit('contacts:get') //TODO: replace getAll with get or create seperate call - to update specific user or this user.
+      // NOTE: contacts are all other users (this user is excluded - hence calling profile:getMy)
+      socket.emit('contacts:get')
       socket.emit('chats:getMy')
       socket.emit('profile:getMy')
     }
@@ -93,7 +105,7 @@ const SocketProvider = ({ children }) => {
 
     function onContactsOnline(onlineContactsMap) {
       if (Object.keys(onlineContactsMap).length === 1) {
-        setPendingToast({type: 'connection', contactName: Object.keys(onlineContactsMap)[0]})
+        setPendingToast({ type: 'connection', contactName: Object.keys(onlineContactsMap)[0] })
       }
 
       setOnlineContacts(prev => ({ ...prev, ...onlineContactsMap }))
@@ -102,7 +114,7 @@ const SocketProvider = ({ children }) => {
     function onContactsOffline(contactId) {
       setOnlineContacts(prev => {
         delete prev[contactId]
-        return {...prev}
+        return { ...prev }
       })
     }
 
@@ -111,11 +123,11 @@ const SocketProvider = ({ children }) => {
      * @param {Chat[]} myChats 
      */
     function onChatsReceived(myChats) {
+      // NOTE: blocked private chats are not retrieved (handled on the server side)
       console.log("myChats.length", myChats.length)
       setChats(prev => {
         let updatedChats = { ...prev }
         myChats.forEach(chat => {
-          // TODO: should blocked chats be displayed?
           if (chat.type === 'private') {
             // NOTE: in a private chat there are only 2 members - this user and another.
             const contact = chat.members.find(member => member._id != sessionStorage['id'])
@@ -132,14 +144,12 @@ const SocketProvider = ({ children }) => {
               setPrivateChatsMap(prevMap => ({ ...prevMap, [contact._id]: chat._id }))
             }
           }
-          else{
+          else {
             // chat.type === 'group'
             // FUTURE: chat.type === 'self' ?
             updatedChats[chat._id] = chat
           }
-          
-          //NOTE: It is not guarenteed that the messages map will be updated with the new group by the time the messages will arrive
-          // To eliminate race conditions - it will be updated (and created) on message received only (if it does not exist).
+
           socket.emit("messages:get", chat._id)
         })
         return updatedChats
@@ -152,7 +162,7 @@ const SocketProvider = ({ children }) => {
      */
     function onMessageReceived(payload) {
       if (payload?.messages.length === 1) {
-        setPendingToast({type: 'message', payload})
+        setPendingToast({ type: 'message', payload })
       }
 
       setMessageGroups(prev => {
@@ -174,7 +184,7 @@ const SocketProvider = ({ children }) => {
         const numOfNewMessages = payload.messages.length
         const numOfMessagesMissing = serverOffset - clientOffset
         const duplicatesExist = numOfNewMessages > numOfMessagesMissing
-        const noDuplicates = numOfNewMessages <= numOfMessagesMissing // how did this happen? volatile messages?
+        const noDuplicates = numOfNewMessages <= numOfMessagesMissing
         const exactMissingMessages = numOfNewMessages === numOfMessagesMissing
 
         let messages = payload.messages
@@ -201,12 +211,12 @@ const SocketProvider = ({ children }) => {
           // remove keys from privateChatMap
           setPrivateChatsMap(previousPrivates => {
             delete previousPrivates[previousChats[chatId]?.privateChatContactId]
-            return {...previousPrivates}
+            return { ...previousPrivates }
           })
           // remove chat key
           delete previousChats[chatId]
         })
-        return {...previousChats}
+        return { ...previousChats }
       })
 
       // if one of the removed chats is open - navigate away

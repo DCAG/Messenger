@@ -1,0 +1,12 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+       {
+          // this is the "npm run dev" default script. this task calls the default. with additional options.
+          "type": "npm",
+          "script": "dev",
+          "isBackground": true,
+          "problemMatcher": []
+        }
+    ]
+}

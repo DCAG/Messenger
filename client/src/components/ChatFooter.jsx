@@ -11,12 +11,10 @@ function ChatFooter({ id, contactId }) {
     const content = e.target[0].value
     const isNewPrivateChat = !id && contactId
     if (isNewPrivateChat) {
-      // TODO: draw the entire flow
       const newMessage = { contactId, content }
       socket.emit('chat:private:new:message', newMessage)
     }
     else {
-      // TODO: draw the entire flow
       const newMessage = { chatId: id, content }
       socket.emit('chat:message', newMessage)
     }

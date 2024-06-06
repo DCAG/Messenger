@@ -204,6 +204,10 @@ body {
   padding-bottom: 4px;
 }
 
+.chat-window--header-info img {
+  width: 32px;
+}
+
 .chat-window--header-info * {
   vertical-align: middle;
   padding-right: 10px;
@@ -253,6 +257,10 @@ body {
   margin: 2px;
   height: max-content;
   transform: translateZ(0); /* fixes a bug in Safari iOS where the scroller doesn't update */
+}
+
+.message--timestamp {
+  font-size: xx-small;
 }
 
 .message-me {
@@ -480,6 +488,11 @@ body {
 
 .login-form--actions {
   text-align: center;
+}
+
+.login-form--actions--error {
+  font-size: large;
+  color: crimson;
 }
 
 .login-form button[type="submit"] {

@@ -30,7 +30,6 @@ function ChatsList() {
 
       <ul className='chat-list'>
         {
-          // Object.keys(chats).length > 0 && 
           Object.keys(chats).filter(chatFilter).map(id => {
             const chat = chats[id]
             return (
