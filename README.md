@@ -1,5 +1,7 @@
 # Messenger
 
+⚡Try the **LIVE** demo: [**here**](https://icy-grass-0d0e37a03.5.azurestaticapps.net/) ⬅️
+
 chat application using:
 react + socket.io for client and
 nodejs + socket.io + mongodb + sqlite for server.
