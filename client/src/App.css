@@ -88,8 +88,8 @@ body {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  height: 100vh;
-  max-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
   overflow: hidden;
 }
 
@@ -466,7 +466,7 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
 }
 .login-page h1 {
   align-self: center;
@@ -474,7 +474,7 @@ body {
 
 .login-form {
   align-self: center;
-  height: 100vh;
+  height: 100dvh;
   display: inline-block;
   vertical-align: middle;
 }
