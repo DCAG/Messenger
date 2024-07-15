@@ -1,0 +1,463 @@
+$font-size-default: 1.6rem
+$colors-map: (button: #f9f9f9, button-hover-light:#f1f1f1, button-hover-dark: #7e7e7e,vacant-space: #2c2c2c, online-hint: rgb(88, 254, 58))
+
+*
+  box-sizing: border-box
+
+// html
+  // height: 100%
+
+body
+  font-family: Verdana, Geneva, Tahoma, sans-serif
+  overflow: hidden
+  margin: 0
+  font-size: $font-size-default
+  // height: 100%
+
+.app-base
+  display: grid
+  grid-template-columns: 100%
+  grid-template-areas: "side-panel"
+  grid-template-rows: 100%
+  gap: 0.05rem
+  height: 100vh
+  background-color: map-get($colors-map, vacant-space)
+  > div
+    background-color: rgba(255, 255, 255, 0.8)
+  .main__container,
+  .mobile-controls
+    display: none
+  .side-panel
+    display: flex
+  &.show-main
+    grid-template-areas: "controls" "main"
+    grid-template-rows: 3rem auto
+    .main__container,
+    .mobile-controls
+      display: flex
+    .side-panel
+      display: none
+  @media (min-width: 40rem)
+    grid-template-columns: fit-content(15rem) auto
+    grid-template-areas: "side-panel main main main main main"
+    gap: 0.2rem
+    &.show-main //repeating eveything so regardless if this class is present the changes for large (wide) screen will take affect (could have used !important though...)
+      grid-template-columns: fit-content(15rem) auto
+      grid-template-rows: 100%
+      grid-template-areas: "side-panel main main main main main"
+      gap: 0.2rem
+      .mobile-controls
+        display: none
+      .main__container
+        display: flex
+      .side-panel
+        display: flex
+
+.mobile-controls
+  grid-area: controls
+  display: flex
+  align-items: center
+  padding: 0 1rem
+  button
+    width: 2.2rem
+    height: 2.2rem
+    padding: 0.25rem
+    font-weight: bold
+    border-radius: 100%
+    border: none
+  @media (min-width: 40rem)
+    display: none
+
+.side-panel
+  grid-area: side-panel
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  position: relative
+  height: 100vh
+  max-height: 100vh
+  overflow: hidden
+
+.chat-list__container
+  display: flex
+  flex-direction: column
+  height: 100%
+  width: 100%
+  flex: 1 1 auto
+  min-height: 0
+  overflow: hidden
+
+.chat-list__header
+  margin: 0
+  padding: 0.2rem
+  text-align: center
+  font-size: $font-size-default
+  flex: 0 0 auto
+
+.chat-list__actions
+  display: flex
+  justify-content: space-evenly
+  flex: 0 0 auto
+  *
+    padding: 0.25rem
+    margin: 0.25rem
+
+.chat-list__items
+  list-style: none
+  padding: 0 // reset list default behaviour
+  overflow-y: auto
+  flex: 1 1 auto
+  min-height: 0
+  margin: 0
+
+.chat-item
+  padding: 0.5rem
+  &:hover
+    background-color: map-get($colors-map, button-hover-dark)
+  a
+    display: inline-block
+    width: 100%
+    &:hover,
+    &:active,
+    &:link,
+    &:visited
+      color: black
+      cursor: default
+    > *
+      display: inline-block
+      vertical-align: middle
+      padding: 0.25rem
+  .chat-item__icon
+    width: 40px
+    &.online
+      filter: drop-shadow(0 0 0.75rem map-get($colors-map, online-hint))
+
+.profile-button
+  border-radius: 0.5rem
+  box-shadow: 0 2px 0.25rem darkslategray
+  margin: 0.25rem
+  height: 3.5rem
+  position: relative
+  flex: 0 0 auto
+  &:hover
+    background-color: map-get($colors-map, button-hover-dark)
+    .profile-button__dropdown-content
+      display: block
+
+.profile-button__face
+  height: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 0.3rem
+  img
+    width: 40px
+    margin-right: 0.5rem
+  span
+    font-size: $font-size-default * 1.1
+
+.profile-button__dropdown-content
+  display: none //when active: block
+  position: absolute
+  left: 0
+  bottom: 100%
+  z-index: 1
+  width: 100%
+  border-radius: 0.5rem
+  overflow: hidden //so the border-radius will show
+  background-color: map-get($colors-map, button)
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.2)
+  a,
+  button
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    text-decoration: none
+    border: hidden
+    color: black
+    padding: 0.75rem 1rem
+    display: inherit
+    font-family: inherit
+    font-size: inherit
+    background-color: inherit
+    cursor: default
+    width: 100%
+    text-align: center
+
+    &:hover
+      background-color: map-get($colors-map, button-hover-light)
+
+.main__container
+  overflow: auto
+  grid-area: main
+  background-image: url("./assets/conversation-bg.jpg")
+  background-size: contain
+  background-blend-mode: color-burn
+  display: flex
+  flex-direction: column
+  text-align: center
+
+.chat-window__header
+  /* display: inline-block; *
+  display: flex
+  justify-content: space-between
+  width: 100%
+  text-align: left
+  padding: 0.5rem 1rem
+  min-height: 40px
+  background-color: #d5d5d5
+
+.chat-window__header-info
+  padding: 0.5rem 0
+  img
+    width: 40px
+  *
+    vertical-align: middle
+    margin-right: 10px
+
+.chat-window__header-actions
+  display: flex
+  align-items: flex-start
+  justify-items: center
+  flex-flow: wrap
+  *
+    margin: 0.5rem
+    padding: 0.5rem
+
+#chatStatusText
+  font-weight: lighter
+  font-size: 0.75rem
+  // padding-left: 1rem
+  padding-bottom: 2rem
+
+/* scroll to bottom: https://code.hnldesign.nl/scrolltobottom/ */
+
+.conversation
+  overflow: auto
+  height: calc(100% - 80px)
+  overflow: auto
+  //height: 100px; *
+  display: flex
+  flex-direction: column-reverse
+  overflow-anchor: auto !important //See https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-anchor *
+  transform: translateZ(0) // fixes a bug in Safari iOS where the scroller doesn't update *
+
+.messages-list
+  list-style: none
+  padding: 0.5rem
+  display: flex
+  align-items: flex-start
+  flex-direction: column
+  height: max-content
+  transform: translateZ(0) // fixes a bug in Safari iOS where the scroller doesn't update *
+
+.message
+  width: -moz-fit-content
+  width: fit-content
+  height: -moz-max-content
+  /* border-style: solid; *
+  border-width: 1px
+  padding: 0.5rem
+  margin: 2px
+  height: max-content
+  transform: translateZ(0) // fixes a bug in Safari iOS where the scroller doesn't update *
+
+.message-timestamp
+  font-size: xx-small
+
+.message-me
+  text-align: right
+  align-self: flex-end
+  border-radius: 15px 3px 15px 15px
+  background-color: #d9fdd3
+
+.message-others
+  text-align: left
+  border-radius: 3px 15px 15px 15px
+  background-color: #d5d5d5
+
+.message-sender__title
+  font-size: medium
+  font-weight: bolder
+
+.chat-window__footer
+  width: 100%
+  height: 4.2rem
+  text-align: left
+  padding: 0.2rem
+  background-color: #d5d5d5
+  align-self: flex-end
+  > form
+    display: flex
+    align-items: center
+    padding: 0.5rem
+    height: 100%
+
+#messagebox
+  width: 100%
+  padding: 0.25rem
+  margin-right: 0.5rem
+  height: 100%
+
+#sendbutton
+  width: 2.2rem
+  height: 2.2rem
+  padding: 0.25rem
+  font-weight: bold
+  border-radius: 100%
+  border-style: none
+  box-shadow: 0 0.08rem 0.25rem darkslategray
+  transition: all 0.2s ease
+  &:active
+    box-shadow: 0 0 0.08rem darkslategray
+    transform: translateY(2px)
+
+.new-editgroup-form
+  align-self: center
+  overflow: auto
+  label
+    text-align: right
+  input[type="text"]
+    font-size: large
+    padding: 0.25rem
+  button[type="submit"]
+    padding: 0.5rem
+
+.new-editgroup-form__fields
+  display: grid
+  grid-template-columns: max-content max-content
+  grid-gap: 0.25rem
+
+.new-editgroup-form__members
+  display: grid
+  gap: 10px
+  grid-template-columns: max-content max-content max-content
+  select
+    padding: 0.25rem
+    height: 200px
+    font-size: large
+    width: 150px
+  button
+    padding: 0.25rem
+    font-size: larger
+
+.new-chat__groupby
+  display: flex
+  flex-direction: column
+  overflow: auto
+  p
+    justify-self: flex-start
+    text-align: left
+    background-color: #d5d5d5
+    margin: 0 0.5rem
+    padding: 0.5rem
+    color: #7e7e7e
+
+.new-chat__contacts
+  display: grid
+  gap: 1rem
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))
+  > a
+    display: inline-block
+    text-decoration: none
+    margin: 0.5rem
+    &:hover
+      color: black
+      cursor: default
+      border-style: solid
+      border-width: 1px
+      border-color: #7e7e7e
+      background-color: #7e7e7e !important
+    &:active,
+    &:link,
+    &:visited
+      color: black
+      cursor: default
+    *
+      display: inline-block
+      vertical-align: middle
+      padding: 0.25rem
+    &.online
+      background-color: rgba(88, 254, 58, 0.2)
+
+.blocked-contacts__form
+  display: grid
+  gap: 10px
+  grid-template-columns: repeat(3,max-content)
+  align-self: center
+  select
+    padding: 0.25rem
+    height: 200px
+    font-size: large
+    width: 150px
+  button
+    padding: 0.25rem
+    font-size: larger
+
+/* resources */
+
+.login-page
+  display: flex
+  flex-direction: column
+  width: 100%
+  height: 100vh
+  h1
+    align-self: center
+
+.login-form
+  align-self: center
+  height: 100vh
+  display: inline-block
+  vertical-align: middle
+
+  input[type="text"],
+  input[type="password"]
+    font-size: large
+    padding: 0.25rem
+
+  button[type="submit"]
+    padding: 0.5rem
+    margin: 0.5rem
+    font-family: inherit
+
+.login-form__fields
+  display: grid
+  grid-template-columns: max-content max-content
+  grid-gap: 0.25rem
+  label
+    text-align: right
+
+.login-form__actions
+  text-align: center
+
+.login-form__error
+  font-size: large
+  color: crimson
+
+/* Toast */
+.toast-container
+  position: fixed
+  top: 85px
+  right: 20px
+  z-index: 9999
+  background-color: rgba(255, 255, 255, 0) !important
+  height: auto !important
+  text-align: inherit !important
+
+.toast-message
+  background-color: #333
+  color: #fff
+  padding: 16px
+  border-radius: 4px
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1)
+  display: flex
+  align-items: center
+  justify-content: space-between
+  text-align: left
+
+.toast-close
+  background: none
+  border: none
+  color: #fff
+  font-size: 20px
+  cursor: pointer

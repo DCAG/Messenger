@@ -6,7 +6,7 @@ import { CHAT_IMG } from '../utils/images'
 import '../utils/types'
 
 
-function ChatsList() {
+function ChatsList({ onNavigation }) {
   const { chats, onlineContacts } = useSocket()
   const [chatsFilter, setChatsFilter] = useState('')
 
@@ -14,32 +14,32 @@ function ChatsList() {
     setChatsFilter(e.target.value)
   }
 
-  const chatFilter = function(id) {
-    if(chatsFilter === 'online'){
+  const chatFilter = function (id) {
+    if (chatsFilter === 'online') {
       return onlineContacts[chats[id]?.privateChatContactId]
     }
     return !chatsFilter || chats[id].type == chatsFilter
   }
 
   return (
-    <div>
-      <h4 className='chat-list--header'>
+    <div className='chat-list__container'>
+      <h1 className='chat-list__header'>
         Chats
-      </h4>
-      <ChatsListActions onFilterChange={handleFilter} />
+      </h1>
+      <ChatsListActions onFilterChange={handleFilter} onNavigation={onNavigation} />
 
-      <ul className='chat-list'>
+      <ul className='chat-list__items'>
         {
           Object.keys(chats).filter(chatFilter).map(id => {
             const chat = chats[id]
             return (
               <li key={chat._id} className='chat-item'>
-                <Link to={chat.type + '/' + chat._id}>
-                  <img src={CHAT_IMG[chat.type]} className={`chat-item--icon${onlineContacts[chat.privateChatContactId]?' online':''}`} alt={`${chat.type} image`} />
+                <Link to={chat.type + '/' + chat._id} onClick={() => onNavigation()}>
+                  <img src={CHAT_IMG[chat.type]} className={`chat-item__icon${onlineContacts[chat.privateChatContactId] ? ' online' : ''}`} alt={`${chat.type} image`} />
                   <span>
                     {
                       // NOTE: property 'privateChatName' was added in socketContext.jsx
-                      chat.type === 'private' ? `${chat.privateChatName}${onlineContacts[chat.privateChatContactId]?' (online)':''}` : (chat.type === 'group' ? chat.name : ':unknown:')
+                      chat.type === 'private' ? `${chat.privateChatName}${onlineContacts[chat.privateChatContactId] ? ' (online)' : ''}` : (chat.type === 'group' ? chat.name : ':unknown:')
                     }
                   </span>
                 </Link>

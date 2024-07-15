@@ -70,14 +70,14 @@ function NewEditGroup() {
   const handleGroupNameChange = e => setChat(prev => ({ ...prev, name: e.target.value }))
 
   return (
-    <div className='chat-window--area'>
+    <div className='main__container'>
       <h4>{id ? "Edit " + chat?.name : "New Group"}</h4>
       <form className='new-editgroup-form' onSubmit={handleSubmit}>
-        <div className='new-editgroup-form--fields'>
+        <div className='new-editgroup-form__fields'>
           <label htmlFor="name">Name </label> <input type="text" name="name" value={chat?.name} onChange={handleGroupNameChange} />
           <label htmlFor="contacts">Contacts </label>
           <GroupMembersInput
-            className="new-editgroup-form--members"
+            className="new-editgroup-form__members"
             allKV={prepareContactsKeyValuePairs()}
             selectedKV={prepareSelectedKeyValuePairs()}
             onChange={handleGroupMembersChange} />

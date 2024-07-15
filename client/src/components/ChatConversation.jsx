@@ -35,13 +35,13 @@ function ChatConversation({ chat }) {
 
   const getSender = (senderId) => {
     let senderResult = {}
-    if(chatMembers[senderId]){
+    if (chatMembers[senderId]) {
       senderResult._id = chatMembers[senderId]._id
       senderResult.displayName = chatMembers[senderId].username
-    }else if(contacts[senderId]){
+    } else if (contacts[senderId]) {
       senderResult._id = contacts[senderId]._id
       senderResult.displayName = contacts[senderId].username + ' (Past Member)'
-    }else{
+    } else {
       senderResult._id = undefined
       senderResult.displayName = ':unknown:'
     }
@@ -57,11 +57,11 @@ function ChatConversation({ chat }) {
             const sender = getSender(msg.senderId)
             return (
               <li key={msg.id} className={userId === sender?._id ? 'message message-me' : 'message message-others'} style={getMessageStyle(msg.content)}>
-                <span style={(chat.type !== 'group' || userId === sender?._id) ? { display: 'none' } : {}} className='message-sender--title'>
+                <span style={(chat.type !== 'group' || userId === sender?._id) ? { display: 'none' } : {}} className='message-sender__title'>
                   {sender.displayName}<br />
                 </span>
                 <span>{msg.content}</span><br />
-                <span className='message--timestamp'>
+                <span className='message-timestamp'>
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </li>

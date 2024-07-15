@@ -47,7 +47,7 @@ function ChatHeader({ chat }) {
       return ''
     }
 
-    if(!chat?.members){
+    if (!chat?.members) {
       return prev
     }
 
@@ -83,18 +83,18 @@ function ChatHeader({ chat }) {
     // TODO: draw the entire flow
     if (chat.type === 'private') {
       const contactId = chat.privateChatContactId
-      if(!isBlocked){
+      if (!isBlocked) {
         socket.emit('contacts:blocked:update', blockedList.concat(contactId))
       }
-      else{
-        socket.emit('contacts:blocked:update', blockedList.filter(blockedId => blockedId!==contactId))
+      else {
+        socket.emit('contacts:blocked:update', blockedList.filter(blockedId => blockedId !== contactId))
       }
     }
   }
 
   return (
-    <div className='chat-window--header'>
-      <div className='chat-window--header-info'>
+    <div className='chat-window__header'>
+      <div className='chat-window__header-info'>
         <img src={CHAT_IMG[chat?.type]} alt={`${chat?.type} image`} />
         <span>
           {chatName}
@@ -105,10 +105,10 @@ function ChatHeader({ chat }) {
           </span>
         </div>
       </div>
-      <div className="chat-window--header-actions">
+      <div className="chat-window__header-actions">
         <button style={chat?.type === 'group' ? {} : { display: 'none' }} onClick={editGroup}>Edit Group</button>
         <button style={chat?.type === 'group' ? {} : { display: 'none' }} onClick={leaveGroup}>Leave Group</button>
-        <button style={chat?.type === 'private' ? {} : { display: 'none' }} onClick={blockUnblockContact}>{!isBlocked?'Block':'Unblock'}</button>
+        <button style={chat?.type === 'private' ? {} : { display: 'none' }} onClick={blockUnblockContact}>{!isBlocked ? 'Block' : 'Unblock'}</button>
       </div>
     </div>
   )

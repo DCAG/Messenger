@@ -1,5 +1,6 @@
 {
     "workbench.editor.customLabels.patterns": {
         "**/pages/**/*.jsx": "${filename} - page"
-    }
+    },
+    "editor.formatOnSave": true
 }

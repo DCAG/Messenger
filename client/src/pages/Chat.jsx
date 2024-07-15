@@ -58,7 +58,7 @@ function Chat() {
   }, [id, chats, contactId, privateChatsMap, contacts])
 
   return (
-    <div className='chat-window--area'>
+    <div className='main__container'>
       <ChatHeader chat={chat} />
       <ChatConversation chat={chat} />
       <ChatFooter id={chat?._id} contactId={contactId} />

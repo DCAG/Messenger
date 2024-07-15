@@ -27,7 +27,7 @@ function ChatFooter({ id, contactId }) {
   }
 
   return (
-    <div className='chat-window--footer'>
+    <div className='chat-window__footer'>
       <form action="" onSubmit={handleSubmit} ref={messageFormRef}>
         <input id="messagebox" type="text" onChange={handleChange} style={msgBoxTextRTL ? { direction: 'rtl' } : {}} />
         <button id="sendbutton" type='submit'>{"\u2B9E"}</button>

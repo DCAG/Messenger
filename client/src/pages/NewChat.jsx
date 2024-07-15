@@ -41,20 +41,20 @@ function NewChat() {
   }
 
   return (
-    <div className='chat-window--area'>
+    <div className='main__container'>
       <h4>New Chat</h4>
       <h4>Select Contact</h4>
-      <div className='new-chat--groupby'>
+      <div className='new-chat__groupby'>
         {
           Object.keys(phoneBook).map(letter => {
             return (
               <div key={letter}>
                 <p>{letter}</p>
-                <div className='new-chat--contacts'>
+                <div className='new-chat__contacts'>
                   {
                     phoneBook[letter].map(contact => {
                       return (
-                        <a key={contact._id} data-contactid={contact._id} onClick={handleAnchorLink} className={`${onlineContacts[contact._id]?'online':''}`}>{contact.username}</a>
+                        <a key={contact._id} data-contactid={contact._id} onClick={handleAnchorLink} className={`${onlineContacts[contact._id] ? 'online' : ''}`}>{contact.username}</a>
                       )
                     })
                   }

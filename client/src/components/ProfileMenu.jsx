@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../utils/useAuth'
 import useSocket from '../utils/useSocket'
 
-function ProfileMenu() {
+function ProfileMenu({ onNavigation }) {
   const { logoutUser } = useAuth()
   const { socket } = useSocket()
   const navigate = useNavigate()
@@ -16,15 +16,15 @@ function ProfileMenu() {
   }
 
   return (
-    <div className='chat-list--profile profile-dropdown'>
-      <div className='profile-dropbtn'>
-        <img src={profileImage} className='profile-dropbtn--image' alt={`profile image`} />
+    <div className='profile-button'>
+      <div className='profile-button__face'>
+        <img src={profileImage} alt={`profile image`} />
         <span>
           {sessionStorage['username']}
         </span>
       </div>
-      <div className="profile-dropdown-content">
-        <Link to="profile/blocked">Blocked Contacts</Link>
+      <div className="profile-button__dropdown-content">
+        <Link to="profile/blocked" onClick={() => onNavigation()}>Blocked Contacts</Link>
         <button onClick={logout}>Logout</button>
       </div>
     </div>
