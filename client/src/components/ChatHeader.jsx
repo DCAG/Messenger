@@ -5,7 +5,7 @@ import useSocket from '../utils/useSocket'
 
 function ChatHeader({ chat }) {
   const navigate = useNavigate()
-  const { socket, blockedList } = useSocket()
+  const { socket, blockedList, onlineContacts } = useSocket()
   const [chatName, setChatName] = useState(':init:')
   const [statusText, setStatusText] = useState('')
   const [isBlocked, setIsBlocked] = useState(false)
@@ -18,7 +18,7 @@ function ChatHeader({ chat }) {
     // FUTURE: statusText will present if someone is typing...
     setStatusText(writeStatusText)
     setChatName(writeChatName)
-  }, [chat, isBlocked])
+  }, [chat, isBlocked, onlineContacts])
 
   /**
    * 
@@ -44,7 +44,7 @@ function ChatHeader({ chat }) {
     }
 
     if (chat?.type !== 'group') {
-      return ''
+      return 'Status: ' + (onlineContacts[chat?.privateChatContactId] ? 'Online' : 'Offline')
     }
 
     if (!chat?.members) {
@@ -53,22 +53,7 @@ function ChatHeader({ chat }) {
 
     // in a group: present list of members
     const members = chat.members.map(m => m.username)
-    const eachLimit = 6;
-    let lengthLimit = 20;
-    let result = []
-    let i = 0;
-    while (lengthLimit > 0 && members.length > i) {
-      if (members[i].length > eachLimit) {
-        result.push(members[i].substr(0, eachLimit) + '-')
-        lengthLimit -= eachLimit
-      }
-      else {
-        result.push(members[i])
-        lengthLimit -= members[i].length
-      }
-      i++
-    }
-    return "Members: " + result.join(', ') + (lengthLimit <= 0 ? '...' : '')
+    return "Members: " + members.join(', ')
   }
 
   const editGroup = () => {
@@ -99,11 +84,9 @@ function ChatHeader({ chat }) {
         <span>
           {chatName}
         </span>
-        <div>
-          <span id="chatStatusText">
-            {statusText}
-          </span>
-        </div>
+        <span id="chatStatusText">
+          {statusText}
+        </span>
       </div>
       <div className="chat-window__header-actions">
         <button style={chat?.type === 'group' ? {} : { display: 'none' }} onClick={editGroup}>Edit Group</button>

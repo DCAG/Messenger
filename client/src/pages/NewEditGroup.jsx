@@ -24,8 +24,8 @@ function NewEditGroup() {
       const groupObj = {
         ...chat,
         description: chat.name,
-        // NOTE: Add current user to the group
-        members: chat.members.map(i => i._id).concat([sessionStorage['id']])
+        // NOTE: Add current user to the group (if not already in it - in case of edit-group)
+        members: chat.members.map(i => i._id).filter(j => j != sessionStorage['id']).concat([sessionStorage['id']])
       }
       if (!id) {
         socket.emit("chat:group:create", groupObj)

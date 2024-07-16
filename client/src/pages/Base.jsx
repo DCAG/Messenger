@@ -11,7 +11,7 @@ function Base() {
   return (
     <div className={'app-base' + (hideMain ? '' : ' show-main')}>
       <div className='mobile-controls'>
-        <button title="back" onClick={() => setHideMain(true)}>{"\u2B9C"}</button>
+        <button title="back" onClick={() => setHideMain(true)}>{"\u2190"}</button>
       </div>
       <div className={'side-panel'}>
         <ChatsList onNavigation={() => setHideMain(false)} />
