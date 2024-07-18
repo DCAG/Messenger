@@ -36,14 +36,13 @@
   flex-direction: column;
   width: 100%;
   height: 100dvh;
+  align-items: center;
 }
 .login-page h1 {
-  align-self: center;
+  margin: 0;
 }
 
 .login-form {
-  align-self: center;
-  height: 100dvh;
   display: inline-block;
   vertical-align: middle;
 }
@@ -53,7 +52,7 @@
   padding: 0.25rem;
 }
 .login-form button[type=submit] {
-  padding: 0.5rem;
+  padding: 0.5rem 0.8rem;
   margin: 0.5rem;
   font-family: inherit;
 }
@@ -61,7 +60,7 @@
 .login-form__fields {
   display: grid;
   grid-template-columns: repeat(2, max-content);
-  grid-gap: 0.25rem;
+  gap: 0.5rem;
 }
 .login-form__fields label {
   text-align: right;
@@ -74,6 +73,31 @@
 .login-form__error {
   font-size: large;
   color: crimson;
+}
+
+.test-this-yourself {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  align-self: center;
+}
+.test-this-yourself h3 {
+  margin: 0.5rem;
+  text-align: center;
+}
+.test-this-yourself div {
+  overflow: auto;
+}
+.test-this-yourself div thead {
+  font-weight: bold;
+}
+.test-this-yourself div tr, .test-this-yourself div td {
+  padding: 0.4rem;
+}
+.test-this-yourself div button {
+  vertical-align: middle;
 }
 
 * {
@@ -238,7 +262,7 @@ body {
   width: 40px;
 }
 .chat-item .chat-item__icon.online {
-  filter: drop-shadow(0 0 0.75rem rgba(88, 254, 58, 0.2));
+  filter: drop-shadow(0 0 0.75rem rgba(88, 254, 58, 0.8));
 }
 
 .profile-button {
@@ -545,7 +569,7 @@ body {
   padding: 0.25rem;
 }
 .new-chat__contacts > a.online {
-  background-color: rgba(88, 254, 58, 0.2);
+  background-color: rgba(88, 254, 58, 0.8);
 }
 
 .blocked-contacts__form {

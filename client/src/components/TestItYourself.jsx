@@ -1,6 +1,6 @@
 import React from 'react'
 
-function TestItYourself({onClick}) {
+function TestItYourself({ onClick }) {
   const users = [
     {
       "username": "alice",
@@ -43,19 +43,19 @@ function TestItYourself({onClick}) {
       "password": "baseball"
     }]
   return (
-    <div>
-    <center>
-      Test this yourself: <br />
-      <table>
-        <thead>
-          <tr>
-            <td style={{ paddingRight: '15px' }}><b>username</b></td>
-            <td><b>password</b></td>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            users.map(user => {
+    <div className='test-this-yourself'>
+      <h3>Test this yourself:</h3>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <td>username</td>
+              <td>password</td>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              users.map(user => {
                 return (
                   <tr key={user.username}>
                     <td>{user.username}</td>
@@ -64,11 +64,11 @@ function TestItYourself({onClick}) {
                   </tr>
                 )
               })
-          }
-        </tbody>
-      </table>
-    </center>
-  </div>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }
 

@@ -3,12 +3,11 @@
   flex-direction: column
   width: 100%
   height: 100dvh
+  align-items: center
   h1
-    align-self: center
+    margin: 0
 
 .login-form
-  align-self: center
-  height: 100dvh
   display: inline-block
   vertical-align: middle
 
@@ -18,14 +17,14 @@
     padding: 0.25rem
 
   button[type="submit"]
-    padding: 0.5rem
+    padding: 0.5rem 0.8rem
     margin: 0.5rem
     font-family: inherit
 
 .login-form__fields
   display: grid
   grid-template-columns: repeat(2,max-content)
-  grid-gap: 0.25rem
+  gap: 0.5rem
   label
     text-align: right
 
@@ -35,3 +34,23 @@
 .login-form__error
   font-size: large
   color: crimson
+
+.test-this-yourself
+  flex: 1
+  overflow: hidden
+  display: flex
+  flex-direction: column
+
+  min-height: 0
+  align-self: center
+  h3
+    margin: 0.5rem
+    text-align: center
+  div
+    overflow: auto
+    thead
+      font-weight: bold
+    tr,td
+      padding: 0.4rem
+    button
+      vertical-align: middle

@@ -38,7 +38,7 @@ function Login() {
   return (
     <div className='login-page'>
       <h1>Login</h1>
-      <form onSubmit={handleLogin} className='login-form'>
+      <form onSubmit={handleLogin} className='login-form' noValidate>
         <div className='login-form__fields'>
           <label htmlFor="username">Username: </label>
           <input type="text" name="username" value={username} onChange={e => setUsername(e.target.value)} placeholder='Username:' required />
@@ -46,7 +46,7 @@ function Login() {
           <input type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} placeholder='Password:' required />
         </div>
         <div className='login-form__actions'>
-          <button type='submit'>Login</button><br />
+          <button type='submit'>Login</button>
           <div className='login-form__error'>
             <span>{errorMessage}</span>
           </div>
