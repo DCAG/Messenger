@@ -2,16 +2,21 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const usersService = require('../services/usersService')
 const errorMessages = require('../utils/errorMessages')
+const { check, validationResult } = require('express-validator')
 
 const router = express.Router()
 
 // inside: /auth/
-router.post('/login', async (req, res) => {
+router.post('/login', [
+  check('username').isString().notEmpty().withMessage('Username is required'),
+  check('password').isString().notEmpty().withMessage('Password is required')],
+    async (req, res) => {
+  
   const { username, password } = req.body
+  const errors = validationResult(req)
 
-  if (typeof username != "string" || typeof password != "string") {
-    response.send("Invalid parameters!");
-    response.end();
+  if (!errors.isEmpty()) {
+    res.status(422).send(errors.array());
     return;
   }
 
