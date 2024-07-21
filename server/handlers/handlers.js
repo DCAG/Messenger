@@ -4,12 +4,21 @@ const usersService = require('../services/usersService')
 require('../utils/types')
 
 module.exports = (io) => {
+  /**
+   * 
+   * @emits 'profile:received'
+   */
   const getMyProfile = async function () {
     const socket = this;
     const contact = await usersService.getByUsername(socket.request.user.user.username);
     socket.emit('profile:received', contact)
   }
 
+  /**
+   * 
+   * @emits 'contacts:received'
+   * @emits 'contacts:online'
+   */
   const getContacts = async function () {
     const socket = this;
     const socketUser = socket?.request?.user;
@@ -30,6 +39,10 @@ module.exports = (io) => {
     socket.emit('contacts:online', onlineContactsMap)
   }
 
+  /**
+   * 
+   * @emits 'chats:received'
+   */
   const getMyChats = async function () {
     const socket = this;
     const socketUser = socket?.request?.user;
@@ -57,6 +70,8 @@ module.exports = (io) => {
   /**
    * 
    * @param {Chat} payload - (properties '_id', 'type' assumed missing), members property is a list of user ids (contact ids)
+   * @emits 'chats:received'
+   * @emits 'chat:redirect
    */
   const createGroupChat = async function (payload) {
     const socket = this;
@@ -83,6 +98,7 @@ module.exports = (io) => {
   /**
    * 
    * @param {Chat} payload - (property 'type' assumed missing) members property is a list of user ids (contact ids of type String)
+   * @emits 'chats:received'
    */
   const editGroupChat = async function (payload) {
     const socket = this;
@@ -120,7 +136,10 @@ module.exports = (io) => {
     })
   };
 
-
+  /**
+   * 
+   * @param {String} chatId 
+   */
   const leaveChat = async function (chatId) {
     const socket = this;
     const socketUser = socket?.request?.user;
@@ -158,6 +177,8 @@ module.exports = (io) => {
   /**
    * 
    * @param {NewPrivateChatAndMessage} message 
+   * @emits 'chats:received' 
+   * @emits 'chat:redirect' 
    */
   const messageNewPrivateChat = async function (message) {
     const socket = this;
@@ -214,6 +235,12 @@ module.exports = (io) => {
     socket.emit('chat:redirect', chat._id)
   };
 
+  /**
+   * 
+   * @param {String} chatId 
+   * @param {Number} clientOffset
+   * @emits 'message:received'
+   */
   const getMessages = async function (chatId, clientOffset = 0) {
     const socket = this;
     const messages = await messagesService.getAllRemainingMessages(chatId, clientOffset)
@@ -223,6 +250,9 @@ module.exports = (io) => {
   /**
    * 
    * @param {Array<String>} blockedList 
+   * @emits 'profile:received'
+   * @emits 'chats:removed'
+   * @emits 'chats:received'
    */
   const updateBlockedContacts = async function (blockedList) {
     const socket = this;
