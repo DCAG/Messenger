@@ -28,9 +28,9 @@ function ChatConversation({ chat }) {
 
   const getMessageStyle = (content) => {
     if (/^[\u0590-\u05fe]+/.test(content)) {
-      return { direction: 'rtl' }
+      return 'rtl'
     }
-    return {}
+    return 'ltr'
   }
 
   const getSender = (senderId) => {
@@ -56,12 +56,12 @@ function ChatConversation({ chat }) {
           conversation && conversation.map(msg => {
             const sender = getSender(msg.senderId)
             return (
-              <li key={msg.id} className={userId === sender?._id ? 'message message-me' : 'message message-others'} style={getMessageStyle(msg.content)}>
+              <li key={msg.id} className={userId === sender?._id ? 'message message-me' : 'message message-others'} dir={getMessageStyle(msg.content)}>
                 <span style={(chat.type !== 'group' || userId === sender?._id) ? { display: 'none' } : {}} className='message-sender__title'>
                   {sender.displayName}<br />
                 </span>
                 <span>{msg.content}</span><br />
-                <span className='message-timestamp'>
+                <span className='message-timestamp' dir='ltr'>
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </li>
