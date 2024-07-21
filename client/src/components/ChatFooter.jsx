@@ -10,6 +10,10 @@ function ChatFooter({ id, contactId }) {
     e.preventDefault()
     const content = e.target[0].value
     const isNewPrivateChat = !id && contactId
+    if (!content || content.trim().length === 0) {
+      // prevent sending an empty string
+      return
+    }
     if (isNewPrivateChat) {
       const newMessage = { contactId, content }
       socket.emit('chat:private:new:message', newMessage)
