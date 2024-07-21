@@ -45,7 +45,7 @@
 }
 
 .bubble-logo {
-  background: url("../../public/bubble.svg") center/cover no-repeat border-box;
+  background: url("../bubble.svg") center/cover no-repeat border-box;
   margin-top: 0.3rem;
   width: 105px;
   height: 10vh;
