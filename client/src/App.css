@@ -380,14 +380,16 @@ body {
 .chat-window__header-info > div {
   height: 2rem;
 }
+.chat-window__header-info span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 #chatStatusText {
   grid-column: 2 span;
   font-weight: lighter;
   font-size: 0.9rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .chat-window__header-actions {
