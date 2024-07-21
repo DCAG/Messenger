@@ -4,7 +4,6 @@ import useAuth from '../utils/useAuth'
 import axios from 'axios'
 import useSocket from '../utils/useSocket'
 import TestItYourself from '../components/TestItYourself'
-
 const LOGIN_URL = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/auth/login`
 
 function Login() {
@@ -31,12 +30,20 @@ function Login() {
       navigate('/chats')
     } catch (error) {
       console.error(error)
-      setErrorMessage(error.response?.data?.message ?? error)
+      // input validation errors
+      if (error.response.status === 422) {
+        setErrorMessage(error.response?.data[0].msg ?? error.toString())
+      }
+      // other errors
+      if (error.response.status === 403) {
+        setErrorMessage(error.response?.data?.message ?? error.toString())
+      }
     }
   }
 
   return (
     <div className='login-page'>
+      <div className='bubble-logo'></div>
       <h1>Login</h1>
       <form onSubmit={handleLogin} className='login-form' noValidate>
         <div className='login-form__fields'>
