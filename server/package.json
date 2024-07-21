@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "mocha",
     "dev": "set NODE_ENV=development&& node index.js",
     "prod": "set NODE_ENV=production&& node index.js"
   },
@@ -19,6 +19,7 @@
     "csv-parse": "^5.5.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.0",
     "passport": "^0.7.0",
@@ -28,6 +29,9 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "chai": "^5.1.1",
+    "jest": "^29.7.0",
+    "mocha": "^10.6.0",
+    "sinon": "^18.0.0"
   }
 }

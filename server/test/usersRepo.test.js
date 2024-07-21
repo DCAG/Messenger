@@ -1,3 +1,4 @@
+const expect = require('chai').expect;
 // const usersRepo = require('../repositories/usersRepo')
 
 // describe('users repository - sqlite read access', () => {
