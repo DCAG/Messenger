@@ -48,7 +48,8 @@
   background: url("../bubble.svg") center/cover no-repeat border-box;
   margin-top: 0.3rem;
   width: 105px;
-  height: 10vh;
+  height: 80px;
+  flex: 0 0 auto;
 }
 
 .login-form {
