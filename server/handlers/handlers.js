@@ -10,7 +10,8 @@ module.exports = (io) => {
    */
   const getMyProfile = async function () {
     const socket = this;
-    const contact = await usersService.getByUsername(socket.request.user.user.username);
+    const userId = socket.request.userId
+    const contact = await usersService.getById(userId);
     socket.emit('profile:received', contact)
   }
 
@@ -21,10 +22,9 @@ module.exports = (io) => {
    */
   const getContacts = async function () {
     const socket = this;
-    const socketUser = socket?.request?.user;
-    const socketUserId = socketUser?.user?._id
+    const userId = socket.request.userId
     const contacts = await usersService.getAll()
-    const contactsExceptThisUser = contacts.filter(c => c._id != socketUserId)
+    const contactsExceptThisUser = contacts.filter(c => c._id != userId)
     socket.emit('contacts:received', contactsExceptThisUser)
 
     // get online contacts
@@ -45,13 +45,12 @@ module.exports = (io) => {
    */
   const getMyChats = async function () {
     const socket = this;
-    const socketUser = socket?.request?.user;
-    const socketUserId = socketUser?.user?._id
+    const userId = socket.request.userId
     // get all chats
-    const chats = await chatService.getByUserId(socketUserId) ?? []
+    const chats = await chatService.getByUserId(userId) ?? []
 
     // join all groups chats and unblocked private chats
-    const user = await usersService.getByUsername(socketUser.user.username)
+    const user = await usersService.getById(userId)
     const blockedList = user.blockedList
 
     const unblockedChats = chats.filter(chat => {
@@ -61,7 +60,7 @@ module.exports = (io) => {
     })
     for (const chat of unblockedChats) {
       socket.join(`chat:${chat._id}`)
-      console.debug(`join user ${socketUser.user.username} to chat ${chat._id} (${chat.name})`)
+      console.debug(`join user ${user.username} to chat ${chat._id} (${chat.name})`)
     }
     // sending the user only unblocked chats
     socket.emit('chats:received', unblockedChats)
@@ -133,6 +132,7 @@ module.exports = (io) => {
 
       // send group chat id - for the clients to remove
       io.to(`user:${userId}`).emit("chats:removed", [].concat(chat._id));
+      console.debug(`remove user ${userId} (${member.username}) from chat ${chat._id} (${chat.name})`)
     })
   };
 
@@ -142,8 +142,7 @@ module.exports = (io) => {
    */
   const leaveChat = async function (chatId) {
     const socket = this;
-    const socketUser = socket?.request?.user;
-    const userId = socketUser?.user?._id
+    const userId = socket.request.userId
     const chat = (await chatService.getById(chatId)).toObject()
     chat.members = chat.members.map(member => member._id.toString()).filter(memberId => memberId != userId)
     editGroupChat(chat)
@@ -156,8 +155,7 @@ module.exports = (io) => {
    */
   const messageChat = async function (message) {
     const socket = this;
-    const user = socket.request.user;
-    const userId = user?.user?._id
+    const userId = socket.request.userId
     const { chatId, content } = message
     const chat = await chatService.getById(chatId)
     if (!chat) {
@@ -182,8 +180,7 @@ module.exports = (io) => {
    */
   const messageNewPrivateChat = async function (message) {
     const socket = this;
-    const socketUser = socket.request.user;
-    const userId = socketUser?.user?._id
+    const userId = socket.request.userId
     const chats = await chatService.getByUserId(userId) ?? []
     const { contactId, content } = message
     const user = await usersService.getById(userId)
@@ -256,11 +253,11 @@ module.exports = (io) => {
    */
   const updateBlockedContacts = async function (blockedList) {
     const socket = this;
-    const socketUser = socket?.request?.user;
-    const user = await usersService.getById(socketUser.user._id)
+    const userId = socket.request.userId
+    const user = await usersService.getById(userId)
     if(!user){
       // TODO: block/unblock/refresh contact in a new private chat and see why this craches: 
-      console.error(`user with userId ${socketUser.user._id} was not found in the DB. DB was reset? hijacking websocket messages?`)
+      console.error(`user with userId ${userId} was not found in the DB. DB was reset? hijacking websocket messages?`)
       return
     }
     const unblockedContactsIds = user.blockedList.filter(contactId => !blockedList.includes(contactId.toString()))
@@ -269,7 +266,7 @@ module.exports = (io) => {
     const updatedUser = await usersService.update(user._id, user)
     socket.emit('profile:received', updatedUser)
     // get all **private** chats with blocked contacts AND unblocked contacts
-    const chats = await chatService.getByUserId(socketUser.user._id)
+    const chats = await chatService.getByUserId(userId)
     const blockedChatsIds = chats.filter(c => c.type == 'private' && c.members.some(m => blockedList.includes(m._id.toString()))).map(c => c._id.toString())
     const unblockedChats = chats.filter(c => c.type == 'private' && c.members.some(m => unblockedContactsIds.map(id => id.toString()).includes(m._id.toString())))
 
