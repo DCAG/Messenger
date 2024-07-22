@@ -1,3 +1,5 @@
+@use 'sass:color'
+
 @import 'toast'
 @import 'login'
 
@@ -6,7 +8,7 @@
 @import url("https://cdn.jsdelivr.net/npm/@xz/fonts@1/serve/cascadia-code.min.css")
 
 $font-size-default: 1.8rem
-$colors-map: (button: #f9f9f9, button-hover-light:#f1f1f1, button-hover-dark: #7e7e7e,vacant-space: #2c2c2c, online-hint:rgba(88, 254, 58, 0.8))
+$colors-map: (button: #f9f9f9, button-hover-light:#f1f1f1, button-hover-dark: #7e7e7e,vacant-space: #2c2c2c, online-hint:rgb(88, 254, 58))
 
 *
   box-sizing: border-box
@@ -114,9 +116,11 @@ body
   flex: 1 1 auto
   min-height: 0
   margin: 0
+  display: flex
+  flex-direction: column
 
 .chat-item
-  padding: 0.5rem
+  margin: 0 0.5rem
   &:hover
     background-color: map-get($colors-map, button-hover-dark)
   a
@@ -125,26 +129,31 @@ body
     -moz-appearance: none
     appearance: none
     text-decoration: none
-    display: inline-block
-    // max-width: 150px
-    // white-space: nowrap
-    // overflow: hidden
-    // text-overflow: ellipsis
+    display: flex
+    align-items: center
     &:hover,
     &:active,
     &:link,
     &:visited
       color: black
       cursor: default
-    > *
+    img, span
       margin: 0
       display: inline-block
-      vertical-align: middle
       padding: 0.25rem
-  .chat-item__icon
-    width: 40px
-    &.online
-      filter: drop-shadow(0 0 0.75rem map-get($colors-map, online-hint))
+    span
+      max-width: 85%
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+    .chat-item__icon
+      width: 40px
+      height: 40px
+      object-fit: cover
+      object-position: center
+      flex: 0 0 auto
+      &.online
+        filter: drop-shadow(0 0 0.75rem color.adjust(map-get($colors-map, online-hint), $alpha: -0.2))
 
 .profile-button
   border-radius: 0.5rem
@@ -413,7 +422,7 @@ body
       vertical-align: middle
       padding: 0.25rem
     &.online
-      background-color: map-get($colors-map, online-hint)
+      background-color: color.adjust(map-get($colors-map, online-hint), $alpha: -0.8)
 
 .blocked-contacts__form
   display: grid
