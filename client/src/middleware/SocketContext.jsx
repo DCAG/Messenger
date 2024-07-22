@@ -1,6 +1,6 @@
 // ref: https://dev.to/stephengade/build-custom-middleware-for-a-reactnextjs-app-with-context-api-2ed3
 import React, { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from '../utils/socket'
 import '../utils/types'
 
@@ -29,11 +29,20 @@ const SocketProvider = ({ children }) => {
     }, 3000);
   };
 
+  const getCurrentChatIdFromPath = () => {
+    const matches = window.location.pathname.match(/chats\/(private|group)\/(?<id>[^/]+)/)
+    if (matches) {
+      return matches.groups.id
+    }
+    return undefined
+  }
+
   useEffect(() => {
     if (Object.keys(pendingToast).length > 0) {
       if (pendingToast.type === 'message') {
         const { senderId, content } = pendingToast.payload.messages[0]
-        if (contacts[senderId]) {
+        const chatId = getCurrentChatIdFromPath()
+        if (contacts[senderId] && chatId != pendingToast.payload.chatId) {
           const senderName = contacts[senderId]?.username ?? senderId
           const chat = chats[pendingToast.payload.chatId] ?? pendingToast.payload.chatId
           const where = (chat && chat.type === 'group') ? chat?.name : ''
@@ -104,7 +113,7 @@ const SocketProvider = ({ children }) => {
     }
 
     function onContactsOnline(onlineContactsMap) {
-      if (Object.keys(onlineContactsMap).length === 1) {
+      if (Object.keys(onlineContactsMap).length === 1 && Object.keys(onlineContactsMap)[0] != sessionStorage['id']) {
         setPendingToast({ type: 'connection', contactName: Object.keys(onlineContactsMap)[0] })
       }
 
@@ -221,12 +230,9 @@ const SocketProvider = ({ children }) => {
 
       // if one of the removed chats is open - navigate away
       // NOTE: useParams() from react-router-dom did not work here - probably because this is inside useEffect closure (read NOTE at the top)
-      const matches = window.location.pathname.match(/chats\/(private|group)\/(?<id>[^\/]+)/)
-      if (matches) {
-        const chatId = matches.groups.id
-        if (chatsIds.includes(chatId)) {
-          navigate('/chats')
-        }
+      const chatId = getCurrentChatIdFromPath()
+      if (chatsIds.includes(chatId)) {
+        navigate('/chats')
       }
     }
 
