@@ -30,6 +30,9 @@ function Login() {
       navigate('/chats')
     } catch (error) {
       console.error(error)
+      if (!error.response) {
+        setErrorMessage('Unable to contact server')
+      }
       // input validation errors
       if (error.response.status === 422) {
         setErrorMessage(error.response?.data[0].msg ?? error.toString())

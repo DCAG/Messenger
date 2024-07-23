@@ -26,7 +26,7 @@ const SocketProvider = ({ children }) => {
     setToast({ show: true, type, payload });
     setTimeout(() => {
       setToast({ show: false, type: 'message', payload: {} });
-    }, 3000);
+    }, 4000);
   };
 
   const getCurrentChatIdFromPath = () => {
@@ -46,7 +46,7 @@ const SocketProvider = ({ children }) => {
           const senderName = contacts[senderId]?.username ?? senderId
           const chat = chats[pendingToast.payload.chatId] ?? pendingToast.payload.chatId
           const where = (chat && chat.type === 'group') ? chat?.name : ''
-          showToast('message', { chatName: where, contactName: senderName, message: content })
+          showToast('message', { chatName: where, contactName: senderName, message: content, chatId: pendingToast.payload.chatId, chatType: chat.type })
         }
       } else if (pendingToast.type === 'connection') {
         showToast(pendingToast.type, contacts[pendingToast.contactName]?.username)

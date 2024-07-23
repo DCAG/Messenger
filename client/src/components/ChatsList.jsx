@@ -21,6 +21,11 @@ function ChatsList({ onNavigation }) {
     return !chatsFilter || chats[id].type == chatsFilter
   }
 
+  const getChatName = (chat) => {
+    // NOTE: property 'privateChatName' was added in socketContext.jsx
+    return chat.type === 'private' ? `${chat.privateChatName}${onlineContacts[chat.privateChatContactId] ? ' (online)' : ''}` : (chat.type === 'group' ? chat.name : ':unknown:')
+  }
+
   return (
     <div className='chat-list__container'>
       <h1 className='chat-list__header'>
@@ -36,11 +41,8 @@ function ChatsList({ onNavigation }) {
               <li key={chat._id} className='chat-item'>
                 <Link to={chat.type + '/' + chat._id} onClick={() => onNavigation()}>
                   <img src={CHAT_IMG[chat.type]} className={`chat-item__icon${onlineContacts[chat.privateChatContactId] ? ' online' : ''}`} alt={`${chat.type} image`} />
-                  <span>
-                    {
-                      // NOTE: property 'privateChatName' was added in socketContext.jsx
-                      chat.type === 'private' ? `${chat.privateChatName}${onlineContacts[chat.privateChatContactId] ? ' (online)' : ''}` : (chat.type === 'group' ? chat.name : ':unknown:')
-                    }
+                  <span title={getChatName(chat)}>
+                    {getChatName(chat)}
                   </span>
                 </Link>
               </li>

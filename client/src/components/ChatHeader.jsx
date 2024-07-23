@@ -80,11 +80,11 @@ function ChatHeader({ chat }) {
   return (
     <div className='chat-window__header'>
       <div className='chat-window__header-info'>
-        <img src={CHAT_IMG[chat?.type]} alt={`${chat?.type} image`} />
-        <span>
+        <img src={CHAT_IMG[chat?.type]} alt={`${chat?.type} image`} title={`${chat?.type} chat "${chatName}"`} />
+        <span title={chatName}>
           {chatName}
         </span>
-        <span id="chatStatusText">
+        <span id="chatStatusText" title={statusText}>
           {statusText}
         </span>
       </div>

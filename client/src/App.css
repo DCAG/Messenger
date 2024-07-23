@@ -17,6 +17,7 @@
   padding: 0.7rem;
   border-radius: 0.25rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 .toast-container span {
   line-height: 1.2;
@@ -259,7 +260,7 @@ body {
 }
 
 .chat-item {
-  margin: 0 0.5rem;
+  padding: 0 0.5rem;
 }
 .chat-item:hover {
   background-color: #7e7e7e;
