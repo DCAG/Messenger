@@ -13,6 +13,10 @@ const getCredentials = (username) => {
   return creds.findOne({username: username})
 }
 
+const getAIAgents = () => {
+  return user.find({type: 'ai'})
+}
+
 const getAll = () => {
   return user.find()
 }
@@ -40,4 +44,4 @@ const update = (id, object) => {
   return user.findByIdAndUpdate(id, object, {returnDocument: 'after'})
 }
 
-module.exports = {update, create, getAll, getCredentials, getById, getByUsername} //, create, update, remove}
+module.exports = {update, create, getAll, getCredentials, getById, getByUsername, getAIAgents} //, create, update, remove}

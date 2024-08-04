@@ -21,6 +21,10 @@ const getAll = () => {
   return usersRepo.getAll()
 }
 
+const getAIAgents = () => {
+  return usersRepo.getAIAgents()
+}
+
 const create = (object) => {
   return usersRepo.create(object)
 }
@@ -29,4 +33,4 @@ const update = (id,object) => {
   return usersRepo.update(id,object)
 }
 
-module.exports = {getById, update, verifyCredentials, create, getByUsername, getAll}
+module.exports = {getById, update, verifyCredentials, create, getByUsername, getAll, getAIAgents}
