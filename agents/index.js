@@ -5,8 +5,8 @@ require('./env.config')
 // TODO: create user for claude on server first time run
 console.log(process.env.ANTHROPIC_API_KEY)
 axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
-  username: AI_USERNAME,
-  password: AI_PASSWORD
+  username: process.env.AI_USERNAME,
+  password: process.env.AI_PASSWORD
 }).then((response) => {
   // const accessToken = response.accessToken
   var socket = io.connect(process.env.APP_BACKEND_URL, {reconnect: true});
@@ -28,10 +28,12 @@ axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
 
   const Anthropic = require("@anthropic-ai/sdk");
   const client = new Anthropic.Anthropic({apiKey:process.env.ANTHROPIC_API_KEY});
+  const maxHistoryCount = process.env.MAX_HISTORY_COUNT || 50
 
   const conversationHistory = {}
   const chatsDetails = {}
   const contacts = {}
+
 
   const onContactsReceived = function(users) {
     console.log(users)
@@ -83,6 +85,16 @@ axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
         // log the message
         conversationHistory[chatId]['messages'].push(newMessage)
       }
+
+      // first message must use the "user" role
+      let effectiveHistoryCount = maxHistoryCount
+      if(
+        maxHistoryCount%2 == 1 && conversationHistory[chatId]['messages'].at(-1).role == "assistant" || // history count is even and current is assistant
+        maxHistoryCount%2 == 0 && conversationHistory[chatId]['messages'].at(-1).role == "user" // history count is odd and current role is user
+      ){
+        effectiveHistoryCount = maxHistoryCount + 1
+      }
+      conversationHistory[chatId]['messages'] = conversationHistory[chatId]['messages'].slice(-effectiveHistoryCount)
     })
 
     // don't respond to own messages or messages without the @ai tag
@@ -96,7 +108,7 @@ axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
     }
 
     const chatParticipants = chatsDetails[chatId].members.map(member => member.username).filter(username => username != 'claude')
-    const systemPrompt = `You are Claude, an AI assistant, conversing via textual chat app. Besides you, there are ${chatParticipants.length} participants and their names are: ${chatParticipants.join(', ')}.`
+    const systemPrompt = `You are Claude, an AI assistant, conversing via textual chat app. Besides you, there are ${chatParticipants.length} participants and their names are: ${chatParticipants.join(', ')}. Your context is configured to remember the last ${maxHistoryCount} (+/- 1) messages.`
     try{
       const response = await client.messages.create({
         model: "claude-3-5-sonnet-20240620",
