@@ -124,6 +124,7 @@ axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
     }
     catch(exception){
       console.log(exception)
+      // TODO: implement error handling: https://docs.anthropic.com/en/api/errors
     }
   }
 

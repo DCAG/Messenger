@@ -1,0 +1,64 @@
+name: Deploy Containerized Services to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_WEBAPP_NAME: messenger-containers
+  CONTAINER_REGISTRY: generic.azurecr.io
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Azure Container Registry
+      uses: azure/docker-login@v2
+      with:
+        login-server: ${{ env.CONTAINER_REGISTRY }}
+        username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+        password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
+    - name: Build and push main service image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./server
+        push: true
+        tags: ${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }}
+
+    - name: Build and push internal service image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./agents
+        push: true
+        tags: ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }}
+
+    - name: Generate Docker Compose file
+      run: |
+        echo "version: '3'" > docker-compose.yml
+        echo "services:" >> docker-compose.yml
+        echo "  messenger-server:" >> docker-compose.yml
+        echo "    image: ${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }}" >> docker-compose.yml
+        echo "    ports:" >> docker-compose.yml
+        echo "      - 8080:80" >> docker-compose.yml
+        echo "    environment:" >> docker-compose.yml
+        echo "      - NODE_ENV=production" >> docker-compose.yml
+        echo "  messenger-agents:" >> docker-compose.yml
+        echo "    image: ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }}" >> docker-compose.yml
+        echo "    environment:" >> docker-compose.yml
+        echo "      - NODE_ENV=production" >> docker-compose.yml
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        images: '${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }} ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }}'
+        configuration-file: docker-compose.yml
