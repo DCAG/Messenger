@@ -8,7 +8,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: messenger-containers
-  CONTAINER_REGISTRY: generic.azurecr.io
+  CONTAINER_REGISTRY: messenger.azurecr.io
 
 jobs:
   build-and-deploy:
@@ -60,6 +60,4 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        images: '${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }} ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }}'
         configuration-file: docker-compose.yml
