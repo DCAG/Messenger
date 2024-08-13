@@ -28,36 +28,15 @@ jobs:
         password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
 
     - name: Build and push main service image
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         context: ./server
         push: true
-        tags: ${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }}
+        tags: ${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }},${{ env.CONTAINER_REGISTRY }}/messenger-server:latest
 
     - name: Build and push internal service image
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         context: ./agents
         push: true
-        tags: ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }}
-
-    - name: Generate Docker Compose file
-      run: |
-        echo "version: '3'" > docker-compose.yml
-        echo "services:" >> docker-compose.yml
-        echo "  messenger-server:" >> docker-compose.yml
-        echo "    image: ${{ env.CONTAINER_REGISTRY }}/messenger-server:${{ github.sha }}" >> docker-compose.yml
-        echo "    ports:" >> docker-compose.yml
-        echo "      - 8080:80" >> docker-compose.yml
-        echo "    environment:" >> docker-compose.yml
-        echo "      - NODE_ENV=production" >> docker-compose.yml
-        echo "  messenger-agents:" >> docker-compose.yml
-        echo "    image: ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }}" >> docker-compose.yml
-        echo "    environment:" >> docker-compose.yml
-        echo "      - NODE_ENV=production" >> docker-compose.yml
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        configuration-file: docker-compose.yml
+        tags: ${{ env.CONTAINER_REGISTRY }}/messenger-agents:${{ github.sha }},${{ env.CONTAINER_REGISTRY }}/messenger-agents:latest

@@ -1,0 +1,11 @@
+services:
+  agents:
+    image: messenger-agents
+    environment:
+    - NODE_ENV=production
+  server:
+    image: messenger-server
+    ports:
+    - "8080:80"
+    environment:
+    - NODE_ENV=production
