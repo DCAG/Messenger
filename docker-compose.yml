@@ -3,6 +3,8 @@ services:
     image: messenger-agents
     environment:
     - NODE_ENV=production
+    depends_on:
+      - server
   server:
     image: messenger-server
     ports:

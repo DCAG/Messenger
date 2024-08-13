@@ -11,6 +11,7 @@ const credsModel = require('../models/credsModel')
 const usersModel = require('../models/userModel')
 const chatModel = require('../models/chatModel')
 const { dropAllTablesExec } = require('../configs/sqldb')
+const mongoose = require('mongoose')
 // const connectMongoDB = require('../configs/mongodb')
 
 // connectMongoDB() // NOTE: will keep the process running!!!
@@ -42,10 +43,14 @@ const loadUsersData = async () => {
     const parsedFile = await parseCSV(fileData);
 
     const usersObjects = await Promise.all(parsedFile.map(async (record) => {
-      delete record.id;
       delete record.passwordHash;
       delete record.createdDate;
-      const user = { ...record };
+      //delete record.id;
+      let user = { ...record };
+      delete user.id
+      if(record.type == 'ai'){
+        user['_id'] = new mongoose.mongo.ObjectId(record.id);
+      }
 
       const salt = await bcrypt.genSalt(SALT_ROUNDS);
       user.passwordHash = await bcrypt.hash(user.password, salt);
