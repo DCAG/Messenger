@@ -113,7 +113,7 @@ const loadExternalData = async () => {
     }
     try{
       console.log('loading [users] data from csv file into mongodb')
-      if (await loadUsersData()) {
+      if (process.env.PRELOAD_USERS_DATA == 1 && await loadUsersData()) {
         createFlag('users')
       }
     }
