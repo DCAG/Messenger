@@ -65,7 +65,7 @@ const loadUsersData = async () => {
 
     return true;
   } catch (error) {
-    console.error('Error loading user data:', error);
+    console.warn('Error loading user data:', error);
     return false;
   }
 };
