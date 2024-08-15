@@ -76,6 +76,6 @@ mongoose.connection.once('open', async () => {
   console.log('Connected to MongoDB');
   await populateDB()
   httpServer.listen(port, () => {
-    console.log(`application is running at: http://localhost:${port}`);
+    console.log(`application is running at: http://${process.env.HOSTNAME || 'localhost'}:${port}`);
   });
 })

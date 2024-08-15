@@ -2,12 +2,13 @@ const io = require('socket.io-client')
 const axios = require('axios')
 require('./env.config')
 
-// TODO: create user for claude on server first time run
+console.log(process.env)
 console.log(process.env.ANTHROPIC_API_KEY)
 axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
   username: process.env.AI_USERNAME,
   password: process.env.AI_PASSWORD
 }).then((response) => {
+  console.log('response access token:' + response.data?.accessToken)
   // const accessToken = response.accessToken
   var socket = io.connect(process.env.APP_BACKEND_URL, {reconnect: true});
   socket.auth = { token: response.data.accessToken }
