@@ -101,7 +101,12 @@ const flagExists = (flagName) => {
 const loadExternalData = async () => {
   if (!flagExists('users')) {
     if (process.env.DROP_ALL_COLLECTIONS == 1) {
-      await dropAllCollections()
+      try{
+        await dropAllCollections()
+      }
+      catch(err){
+        console.warn(err)
+      }
     }
     if (process.env.DROP_ALL_MESSAGES == 1) {
       await dropAllTablesExec()
