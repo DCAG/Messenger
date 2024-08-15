@@ -111,9 +111,14 @@ const loadExternalData = async () => {
     if (process.env.DROP_ALL_MESSAGES == 1) {
       await dropAllTablesExec()
     }
-    console.log('loading [users] data from csv file into mongodb')
-    if (await loadUsersData()) {
-      createFlag('users')
+    try{
+      console.log('loading [users] data from csv file into mongodb')
+      if (await loadUsersData()) {
+        createFlag('users')
+      }
+    }
+    catch(err){
+      console.warn(err)
     }
   }
 }
