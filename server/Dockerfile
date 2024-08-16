@@ -12,7 +12,7 @@
 #ENV NODE_ENV=development -e NODE_ENV="development"
 
 #EXPOSE 3000 --expose 3000
-FROM node:22-alpine
+FROM node:22
 WORKDIR /home/node/app
 COPY . .
 RUN npm install

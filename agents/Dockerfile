@@ -10,7 +10,7 @@
 #COPY --chown=node:node . .
 
 #ENV NODE_ENV=development #-e NODE_ENV="development"
-FROM node:22-alpine
+FROM node:22
 WORKDIR /home/node/app
 COPY . .
 RUN npm install
