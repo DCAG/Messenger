@@ -3,11 +3,11 @@
 
 name: Build and deploy Node.js app to Azure Web App - messenger-nodejs
 
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - master
+#   workflow_dispatch:
 
 jobs:
   build:
