@@ -2,14 +2,30 @@ const io = require('socket.io-client')
 const axios = require('axios')
 require('./env.config')
 
+const maxRetries = process.env.MAX_SERVER_CONNECTION_RETRIES || 5;
+let retryWaitTime = process.env.SERVER_CONNECTION_RETRY_WAIT_TIME || 5000;
+
+function rejectDelay(reason) {
+  console.log("failed to connect to server attempting in "+retryWaitTime+" milliseconds")
+  return new Promise(function(resolve, reject) {
+    setTimeout(reject.bind(null, reason), retryWaitTime);
+  });
+}
+function connectionAttempt() {
+  return axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
+    username: process.env.AI_USERNAME,
+    password: process.env.AI_PASSWORD
+  })
+}
+
 console.log(process.env)
-console.log(process.env.ANTHROPIC_API_KEY)
-axios.post(`${process.env.APP_BACKEND_URL}/auth/login`,{
-  username: process.env.AI_USERNAME,
-  password: process.env.AI_PASSWORD
-}).then((response) => {
+
+let p = Promise.reject()
+for(i = 0; i < maxRetries; i++){
+  p = p.catch(connectionAttempt).catch(rejectDelay)
+}
+p.then((response) => {
   console.log('response access token:' + response.data?.accessToken)
-  // const accessToken = response.accessToken
   var socket = io.connect(process.env.APP_BACKEND_URL, {reconnect: true});
   socket.auth = { token: response.data.accessToken }
   socket.disconnect().connect();
