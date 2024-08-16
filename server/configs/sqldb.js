@@ -1,13 +1,15 @@
 const sqlite3 = require('sqlite3')
 const sqlite = require('sqlite')
 const fs = require('fs');
+const path = require('path')
 
-const SQLDB_PATH = process.env.SQLDB_PATH || 'chat.db'
+const SQLDB_PATH = process.env.SQLDB_PATH //|| 'chat.db'
 
 const SQLITE_MODES = {
   OPEN_READWRITE: sqlite3.OPEN_READWRITE,
   OPEN_READONLY: sqlite3.OPEN_READONLY
 }
+
 /**
  * @param {number} mode
  * @param {function} operation
@@ -38,6 +40,10 @@ const dbShell = async (mode = SQLITE_MODES.OPEN_READWRITE, operation) => {
 }
 
 const createDBFileIfDoesNotExist = () => {
+  const parentFullPath = path.resolve(`${SQLDB_PATH}/..`)
+  if (!fs.existsSync(parentFullPath)){
+      fs.mkdirSync(parentFullPath, { recursive: true });
+  }
   // Open the file for writing (and create it if it doesn't exist)
   fs.open(SQLDB_PATH, 'w', (err, file) => {
     if (err) {
@@ -76,7 +82,7 @@ const dropAllTables = async (db) => {
 };
 
 const dropAllTablesExec = async () => {
-  await createDBFileIfDoesNotExist()
+  createDBFileIfDoesNotExist()
   return await dbShell(sqlite3.OPEN_READWRITE, dropAllTables)
 }
 

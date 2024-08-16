@@ -71,7 +71,7 @@ const loadUsersData = async () => {
 };
 
 const createFlag = (flagName) => {
-  const path = `./${flagName}-loaded.flag.txt`
+  const path = `db/${flagName}-loaded.flag.txt`
 
   fs.open(path, 'w', (err, file) => {
     if (err) {
@@ -83,7 +83,7 @@ const createFlag = (flagName) => {
 }
 
 const flagExists = (flagName) => {
-  const path = `./${flagName}-loaded.flag.txt`
+  const path = `db/${flagName}-loaded.flag.txt`
 
   try {
     if (fs.existsSync(path)) {
