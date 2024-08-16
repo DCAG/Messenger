@@ -93,7 +93,7 @@ const SocketProvider = ({ children }) => {
      * @param {Contact} myProfile 
      */
     function onProfileReceived(myProfile) {
-      setBlockedList(prev => myProfile.blockedList ?? prev)
+      setBlockedList(prev => myProfile?.blockedList ?? prev)
       setProfile(prev => myProfile ?? prev)
     }
 

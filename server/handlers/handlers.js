@@ -51,7 +51,7 @@ module.exports = (io) => {
 
     // join all groups chats and unblocked private chats
     const user = await usersService.getById(userId)
-    const blockedList = user.blockedList
+    const blockedList = user?.blockedList??[]
 
     const unblockedChats = chats.filter(chat => {
       // if on private chat the other member is not in blocked list then join to the chat
@@ -190,7 +190,7 @@ module.exports = (io) => {
       socket.emit('error', { content: `contact with id ${contactId} does not exist. messages cannot be sent to contacts that do not exist` })
       return
     }
-    if (user.blockedList.map(b => b._id.toString()).includes(contactId)) {
+    if (user?.blockedList.map(b => b._id.toString()).includes(contactId)) {
       // user blocked contact
       socket.emit('error', { content: `contact with id ${contactId} is in your blocked list.` })
       return
