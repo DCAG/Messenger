@@ -51,16 +51,23 @@ p.then((response) => {
   const chatsDetails = {}
   const contacts = {}
 
+  let AI_USER_ID = process.env.AI_USER_ID
+
+  const onProfileReceived = function(profile) {
+    console.log('received profile')
+    contacts[profile._id] = profile
+    AI_USER_ID = profile._id
+  }
 
   const onContactsReceived = function(users) {
-    console.log(users)
+    console.log('users.length: ' + users.length)
     users.forEach(user => {
       contacts[user._id] = user
     });
   }
 
   const onChatsReceived = function(myChats) {
-    console.log(myChats)
+    console.log('myChats.length: ' + myChats.length)
     myChats.forEach(chat => {
       conversationHistory[chat._id] = {offset: 0, messages: []}
       chatsDetails[chat._id] = chat
@@ -69,7 +76,7 @@ p.then((response) => {
   }
 
   const isAssistant = (id) => {
-    return id == process.env.AI_USER_ID
+    return id == AI_USER_ID
   }
 
   const onMessageReceived = async function(payload) {
@@ -146,7 +153,7 @@ p.then((response) => {
   }
 
   // socket.on('disconnect', onDisconnect);
-  // socket.on('profile:received', onProfileReceived)
+  socket.on('profile:received', onProfileReceived)
   socket.on('contacts:received', onContactsReceived);
   // socket.on('contacts:online', onContactsOnline);
   // socket.on('contacts:offline', onContactsOffline);
