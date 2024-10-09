@@ -1,9 +1,12 @@
 # Messenger
 
-⚡Try the **LIVE** demo: [**here**](https://icy-grass-0d0e37a03.5.azurestaticapps.net/) ⬅️
+~~⚡Try the **LIVE** demo: [**here**](https://icy-grass-0d0e37a03.5.azurestaticapps.net/) ⬅️~~ (no longer active, but there is a demonstration video of capabilities)
 
-chat application using:
-react + socket.io for client and
+Chat application with an AI integration (claude) in private and group chats as well!
+In group chats just add `@ai` in your message if you his response.
+
+The Tech stack is:
+react + socket.io + sass for client
 nodejs + socket.io + mongodb + sqlite for server.
 
 see README files in [client](client/README.md) and [server](server/README.md) for more details.
