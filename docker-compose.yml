@@ -1,13 +1,13 @@
 services:
-  agents:
-    image: messenger-agents
+  server:
+    image: messenger.azurecr.io/messenger-server:latest
+    ports:
+    - "80:8080"
     environment:
     - NODE_ENV=production
-    depends_on:
-      - server
-  server:
-    image: messenger-server
-    ports:
-    - "8080:80"
+    volumes:
+    - "${WEBAPP_STORAGE_HOME}/server/db:/home/node/app/db"
+  agents:
+    image: messenger.azurecr.io/messenger-agents:latest
     environment:
     - NODE_ENV=production
